@@ -1,10 +1,10 @@
 #include <pybind11/pybind11.h>
-#include "example_calculator.hpp"
+#include "physics/SA.hpp"
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(example, m) {
-    py::class_<Calculator>(m, "Calculator")
+PYBIND11_MODULE(mhac, m) {
+    py::class_<physics::SimulatedAnnealing>(m, "SimulatedAnnealing")
         .def(py::init<>())
-        .def("add", &Calculator::add);
+        .def("solve", &physics::SimulatedAnnealing::solve);
 }

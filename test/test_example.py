@@ -1,4 +1,4 @@
-import example
+import mhac
 
-calc = example.Calculator()
-print(calc.add(1, 2))  # Output: 3
+calc = mhac.SimulatedAnnealing()
+calc.solve()

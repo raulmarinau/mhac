@@ -33,3 +33,4 @@
 
 # Folders
 test/__pycache__/
+build/
