@@ -58,13 +58,13 @@ public:
 // TODO: consider moving to an example ns
 struct City
 {
-    float x;
-    float y;
+    int x;
+    int y;
 
     inline float distance(const City& c) const
     {
-        float xdis = this->x - c.x;
-        float ydis = this->y - c.y;
+        int xdis = this->x - c.x;
+        int ydis = this->y - c.y;
         return sqrt(xdis*xdis + ydis*ydis);
     }
 };

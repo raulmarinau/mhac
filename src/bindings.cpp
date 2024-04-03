@@ -11,12 +11,12 @@ PYBIND11_MODULE(mhac, m) {
     py::module m_physics = m.def_submodule("physics");
 
     py::class_<physics::City>(m_physics, "City")
-        .def(py::init<float, float>())
+        .def(py::init<int, int>())
         .def_readwrite("x", &physics::City::x)
         .def_readwrite("y", &physics::City::y)
         .def("distance", &physics::City::distance);
 
-    py::bind_vector<physics::Cities>(m, "Cities");
+    py::bind_vector<physics::Cities>(m_physics, "Cities");
 
     py::class_<physics::Problem, std::unique_ptr<physics::Problem>>(m_physics, "Problem");
 
