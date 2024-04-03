@@ -34,3 +34,5 @@
 # Folders
 test/__pycache__/
 build/
+.vscode/
+include/pybind11/

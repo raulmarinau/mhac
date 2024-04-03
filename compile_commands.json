@@ -1,0 +1,40 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-O3",
+            "-Wall",
+            "-std=c++11",
+            "-fPIC",
+            "-I/usr/include/python3.8",
+            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
+            "-Iinclude",
+            "-Iinclude/physics",
+            "-o",
+            "build/mhac.so",
+            "src/physics/SA.cpp"
+        ],
+        "directory": "/mnt/c/users/marin/Dropbox/University/Master/dissertation/project/mhac",
+        "file": "src/physics/SA.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-O3",
+            "-Wall",
+            "-std=c++11",
+            "-fPIC",
+            "-I/usr/include/python3.8",
+            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
+            "-Iinclude",
+            "-Iinclude/physics",
+            "-o",
+            "build/mhac.so",
+            "src/bindings.cpp"
+        ],
+        "directory": "/mnt/c/users/marin/Dropbox/University/Master/dissertation/project/mhac",
+        "file": "src/bindings.cpp"
+    }
+]

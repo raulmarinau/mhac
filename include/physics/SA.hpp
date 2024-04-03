@@ -32,26 +32,78 @@
  *      T(k+1) = aT(k), where a is close to 1 (eg. 0,99)
 */
 
+#include <vector>
+#include <cmath>
+
 namespace physics
 {
 
-using Solution = int;
+using Solution = std::vector<int>;
+
+class Problem
+{
+public:
+    Problem() = default;
+    Problem(const Problem&) = delete;
+    Problem(Problem&&) = delete;
+    Problem& operator=(const Problem&) = delete;
+    Problem& operator=(Problem&&) = delete;
+    virtual ~Problem() = default;
+
+    virtual Solution generateInitialSolution() = 0;
+    virtual Solution generateNewSolution(const Solution&) = 0;
+    virtual float evaluateSolution(const Solution&) = 0;
+};
+
+// TODO: consider moving to an example ns
+struct City
+{
+    float x;
+    float y;
+
+    inline float distance(const City& c) const
+    {
+        float xdis = this->x - c.x;
+        float ydis = this->y - c.y;
+        return sqrt(xdis*xdis + ydis*ydis);
+    }
+};
+
+using Cities = std::vector<City>;
+
+class TSP: public Problem
+{
+public:
+    TSP() = delete;
+    explicit TSP(const Cities&);
+    
+    Solution generateInitialSolution() override;
+    Solution generateNewSolution(const Solution&) override;
+    float evaluateSolution(const Solution&) override;
+    
+    Cities mCities;
+};
+// TODO: consider moving to an example ns
 
 class SimulatedAnnealing
 {
 public:
-    SimulatedAnnealing() = default;
+    SimulatedAnnealing() = delete;
+    explicit SimulatedAnnealing(Problem*);
     SimulatedAnnealing(const SimulatedAnnealing&) = delete;
     SimulatedAnnealing(SimulatedAnnealing&&) = delete;
     SimulatedAnnealing& operator=(const SimulatedAnnealing&) = delete;
     SimulatedAnnealing& operator=(SimulatedAnnealing&&) = delete;
     virtual ~SimulatedAnnealing() = default;
 
-    void solve();
+    float updateTemp(float T);
+    bool accept(float currCost, float newCost, float T);
+    void solve(float maxT, float minT);
     Solution getSolution();
 
 private:
-    Solution s;
+    Solution mSol;
+    Problem* mProblemType;
 };
     
 } // namespace physics
