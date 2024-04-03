@@ -21,7 +21,8 @@ PYBIND11_MODULE(mhac, m) {
     py::class_<physics::Problem, std::unique_ptr<physics::Problem>>(m_physics, "Problem");
 
     py::class_<physics::TSP, physics::Problem>(m_physics, "TSP")
-        .def(py::init<const physics::Cities&>());
+        .def(py::init<const physics::Cities&>())
+        .def_readwrite("mCities", &physics::TSP::mCities);
 
     py::class_<physics::SimulatedAnnealing>(m_physics, "SimulatedAnnealing")
         .def(py::init<physics::Problem*>())

@@ -1,5 +1,5 @@
-#ifndef PHYSICS_SA
-#define PHYSICS_SA
+#ifndef PHYSICS_SA_HPP
+#define PHYSICS_SA_HPP
 
 /**
  * Need to establish:
@@ -96,12 +96,13 @@ public:
     SimulatedAnnealing& operator=(SimulatedAnnealing&&) = delete;
     virtual ~SimulatedAnnealing() = default;
 
-    float updateTemp(float T);
-    bool accept(float currCost, float newCost, float T);
     void solve(float maxT, float minT);
     Solution getSolution();
 
 private:
+    float updateTemp(float T);
+    bool accept(float currCost, float newCost, float T);
+
     Solution mSol;
     Problem* mProblemType;
 };
@@ -109,4 +110,4 @@ private:
 } // namespace physics
 
 
-#endif // PHYSICS_SA
+#endif // PHYSICS_SA_HPP
