@@ -1,5 +1,5 @@
-#ifndef PHYSICS_SA_HPP
-#define PHYSICS_SA_HPP
+#ifndef MHAC_PHYSICS_SA_HPP
+#define MHAC_PHYSICS_SA_HPP
 
 /**
  * Need to establish:
@@ -110,4 +110,4 @@ private:
 } // namespace physics
 
 
-#endif // PHYSICS_SA_HPP
+#endif // MHAC_PHYSICS_SA_HPP

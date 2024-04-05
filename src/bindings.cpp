@@ -2,10 +2,13 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
+#include <pybind11/stl.h>
 
 #include "physics/SA.hpp"
 
 namespace py = pybind11;
+
+PYBIND11_MAKE_OPAQUE(physics::Cities);
 
 PYBIND11_MODULE(mhac, m) {
     py::module m_physics = m.def_submodule("physics");
@@ -26,5 +29,6 @@ PYBIND11_MODULE(mhac, m) {
 
     py::class_<physics::SimulatedAnnealing>(m_physics, "SimulatedAnnealing")
         .def(py::init<physics::Problem*>())
-        .def("solve", &physics::SimulatedAnnealing::solve);
+        .def("solve", &physics::SimulatedAnnealing::solve)
+        .def("getSolution", &physics::SimulatedAnnealing::getSolution);
 }
