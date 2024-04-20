@@ -34,6 +34,8 @@
 
 #include <memory>
 
+#include <pybind11/pybind11.h>
+
 namespace physics
 {
 namespace SA
@@ -62,6 +64,23 @@ public:
     virtual float evaluateSolution(SolutionPtr) = 0;
 };
 using ProblemPtr = std::shared_ptr<Problem>;
+
+class PyProblem : public Problem
+{
+public:
+    using Problem::Problem;
+
+    SolutionPtr generateInitialSolution() override { 
+        PYBIND11_OVERRIDE_PURE(SolutionPtr, Problem, generateInitialSolution);
+    }
+    SolutionPtr generateNewSolution(SolutionPtr sol) override {
+        PYBIND11_OVERRIDE_PURE(SolutionPtr, Problem, generateNewSolution, sol);
+    }
+    float evaluateSolution(SolutionPtr sol) override {
+        PYBIND11_OVERRIDE_PURE(float, Problem, evaluateSolution, sol);
+    }
+};
+using PyProblemPtr = std::shared_ptr<PyProblem>;
 
 
 class SimulatedAnnealing
