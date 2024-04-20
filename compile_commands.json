@@ -74,5 +74,24 @@
         ],
         "directory": "/home/marin/projects/mhac",
         "file": "src/physics/SA.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-g",
+            "-O3",
+            "-Wall",
+            "-std=c++11",
+            "-fPIC",
+            "-I/usr/include/python3.8",
+            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
+            "-Iinclude",
+            "-o",
+            "build/mhac.so",
+            "src/problems/TSP.cpp"
+        ],
+        "directory": "/home/marin/projects/mhac",
+        "file": "src/problems/TSP.cpp"
     }
 ]

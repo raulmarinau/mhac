@@ -35,4 +35,5 @@
 test/__pycache__
 test/logs
 build/*
-.clangd
+.clangd/
+logs/

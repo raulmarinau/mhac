@@ -32,13 +32,20 @@
  *      T(k+1) = aT(k), where a is close to 1 (eg. 0,99)
 */
 
-#include <vector>
-#include <cmath>
+#include <memory>
 
 namespace physics
 {
+namespace SA
+{
 
-using Solution = std::vector<int>;
+class Solution
+{
+public:
+    virtual ~Solution() = default;
+};
+using SolutionPtr = std::shared_ptr<Solution>;
+
 
 class Problem
 {
@@ -50,46 +57,18 @@ public:
     Problem& operator=(Problem&&) = delete;
     virtual ~Problem() = default;
 
-    virtual Solution generateInitialSolution() = 0;
-    virtual Solution generateNewSolution(const Solution&) = 0;
-    virtual float evaluateSolution(const Solution&) = 0;
+    virtual SolutionPtr generateInitialSolution() = 0;
+    virtual SolutionPtr generateNewSolution(SolutionPtr) = 0;
+    virtual float evaluateSolution(SolutionPtr) = 0;
 };
+using ProblemPtr = std::shared_ptr<Problem>;
 
-// TODO: consider moving to an example ns
-struct City
-{
-    int x;
-    int y;
-
-    inline float distance(const City& c) const
-    {
-        int xdis = this->x - c.x;
-        int ydis = this->y - c.y;
-        return sqrt(xdis*xdis + ydis*ydis);
-    }
-};
-
-using Cities = std::vector<City>;
-
-class TSP: public Problem
-{
-public:
-    TSP() = delete;
-    explicit TSP(const Cities&);
-    
-    Solution generateInitialSolution() override;
-    Solution generateNewSolution(const Solution&) override;
-    float evaluateSolution(const Solution&) override;
-    
-    Cities mCities;
-};
-// TODO: consider moving to an example ns
 
 class SimulatedAnnealing
 {
 public:
     SimulatedAnnealing() = delete;
-    explicit SimulatedAnnealing(Problem*);
+    explicit SimulatedAnnealing(ProblemPtr);
     SimulatedAnnealing(const SimulatedAnnealing&) = delete;
     SimulatedAnnealing(SimulatedAnnealing&&) = delete;
     SimulatedAnnealing& operator=(const SimulatedAnnealing&) = delete;
@@ -97,17 +76,17 @@ public:
     virtual ~SimulatedAnnealing() = default;
 
     void solve(float maxT, float minT);
-    Solution getSolution();
+    SolutionPtr getSolution();
 
 private:
     float updateTemp(float T);
     bool accept(float currCost, float newCost, float T);
 
-    Solution mSol;
-    Problem* mProblemType;
+    SolutionPtr mSolution;
+    ProblemPtr mProblem;
 };
-    
-} // namespace physics
 
+} // namespace SA
+} // namespace physics
 
 #endif // MHAC_PHYSICS_SA_HPP
