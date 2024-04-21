@@ -10,9 +10,14 @@
 namespace py = pybind11;
 
 PYBIND11_MAKE_OPAQUE(physics::SA::Cities);
+PYBIND11_MAKE_OPAQUE(std::vector<int>);
 
 PYBIND11_MODULE(mhac, m)
 {
+    using VectorInt = std::vector<int>;
+    py::bind_vector<VectorInt>(m, "VectorInt");
+    py::implicitly_convertible<py::iterable, VectorInt>();
+
     py::module m_physics = m.def_submodule("physics");
 
     py::class_<physics::SA::SimulatedAnnealing>(m_physics, "SimulatedAnnealing")
@@ -31,12 +36,13 @@ PYBIND11_MODULE(mhac, m)
 
     py::module m_physics_examples = m_physics.def_submodule("examples");
 
-    py::class_<physics::SA::TSP, physics::SA::TSPPtr, physics::SA::Problem>(m_physics_examples, "TSP")
+    py::class_<physics::SA::TSP, physics::SA::Problem, physics::SA::TSPPtr>(m_physics_examples, "TSP")
         .def(py::init<const physics::SA::Cities&>())
         .def_readwrite("mCities", &physics::SA::TSP::mCities);
 
-    py::class_<physics::SA::TSS, physics::SA::TSSPtr>(m_physics_examples, "TSS")
-        .def_readonly("tour", &physics::SA::TSS::tour);
+    py::class_<physics::SA::TSS, physics::SA::Solution, physics::SA::TSSPtr>(m_physics_examples, "TSS")
+        .def(py::init<>())
+        .def_readwrite("tour", &physics::SA::TSS::tour);
     
     py::class_<physics::SA::City>(m_physics_examples, "City")
         .def(py::init<int, int>())
