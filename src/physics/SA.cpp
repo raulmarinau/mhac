@@ -18,7 +18,7 @@ namespace SA
 {
 
 SimulatedAnnealing::SimulatedAnnealing(ProblemPtr probType)
-    : mProblem(probType)
+    :mProblem(probType)
 {
     globalLogger->set_level(spdlog::level::trace);
     globalLogger->flush_on(spdlog::level::info);
@@ -44,11 +44,12 @@ bool SimulatedAnnealing::accept(float currCost, float newCost, float T)
 
 float SimulatedAnnealing::updateTemp(float T)
 {
-    return 0.9995*T;
+    return mK*T;
 }
 
-void SimulatedAnnealing::solve(float maxT, float minT)
+void SimulatedAnnealing::solve(float maxT, float minT, float k)
 {
+    mK = k;
     SolutionPtr S = mProblem->generateInitialSolution();
     float SCost = mProblem->evaluateSolution(S);
 

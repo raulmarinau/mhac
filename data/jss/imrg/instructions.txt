@@ -1,0 +1,4 @@
+Instructions referring to the format of the files:
+(first row) no_machines no_orders
+(second row) processing times for the first order on each machine
+(third row) processing times for the second order on each machine …. 

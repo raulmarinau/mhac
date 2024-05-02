@@ -10,7 +10,7 @@
 namespace py = pybind11;
 
 PYBIND11_MAKE_OPAQUE(physics::SA::Cities);
-PYBIND11_MAKE_OPAQUE(std::vector<int>);
+PYBIND11_MAKE_OPAQUE(std::vector<int>);  // without this and the binding, int vector TSP::tour is immutable
 
 PYBIND11_MODULE(mhac, m)
 {

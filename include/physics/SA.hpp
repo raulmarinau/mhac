@@ -94,13 +94,14 @@ public:
     SimulatedAnnealing& operator=(SimulatedAnnealing&&) = delete;
     virtual ~SimulatedAnnealing() = default;
 
-    void solve(float maxT, float minT);
+    void solve(float maxT, float minT, float k=0.9995);
     SolutionPtr getSolution();
 
 private:
     float updateTemp(float T);
     bool accept(float currCost, float newCost, float T);
 
+    float mK;
     SolutionPtr mSolution;
     ProblemPtr mProblem;
 };
