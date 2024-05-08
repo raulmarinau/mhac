@@ -7,9 +7,7 @@
 
 #include "physics/SA.hpp"
 
-namespace physics
-{
-namespace SA
+namespace problems
 {
 
 struct City
@@ -27,7 +25,7 @@ struct City
 using Cities = std::vector<City>;
 
 // Traveling Salesman Solution
-class TSS: public Solution
+class TSS: public common::Solution
 {
 public:
     std::vector<int> tour;
@@ -35,21 +33,20 @@ public:
 using TSSPtr = std::shared_ptr<TSS>;
 
 // Traveling Salesman Problem
-class TSP: public Problem
+class TSP: public common::Problem
 {
 public:
     TSP() = delete;
     explicit TSP(const Cities&);
     
-    SolutionPtr generateInitialSolution() override;
-    SolutionPtr generateNewSolution(SolutionPtr) override;
-    float evaluateSolution(SolutionPtr) override;
+    common::SolutionPtr generateInitialSolution() override;
+    common::SolutionPtr generateNewSolution(common::SolutionPtr) override;
+    float evaluateSolution(common::SolutionPtr) override;
     
     Cities mCities;
 };
 using TSPPtr = std::shared_ptr<TSP>;
 
-} // namespace SA
-} // namespace physics
+} // namespace problems
 
 #endif // MHAC_PROBLEMS_TSP_HPP

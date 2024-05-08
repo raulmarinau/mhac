@@ -17,7 +17,7 @@ namespace physics
 namespace SA
 {
 
-SimulatedAnnealing::SimulatedAnnealing(ProblemPtr probType)
+SimulatedAnnealing::SimulatedAnnealing(common::ProblemPtr probType)
     :mProblem(probType)
 {
     globalLogger->set_level(spdlog::level::trace);
@@ -50,17 +50,17 @@ float SimulatedAnnealing::updateTemp(float T)
 void SimulatedAnnealing::solve(float maxT, float minT, float k)
 {
     mK = k;
-    SolutionPtr S = mProblem->generateInitialSolution();
+    common::SolutionPtr S = mProblem->generateInitialSolution();
     float SCost = mProblem->evaluateSolution(S);
 
-    SolutionPtr bestS = S;
+    common::SolutionPtr bestS = S;
     float bestSCost = SCost;
 
     float T = maxT;
 
     while (T > minT)
     {
-        SolutionPtr primeS = mProblem->generateNewSolution(S);
+        common::SolutionPtr primeS = mProblem->generateNewSolution(S);
         float primeSCost = mProblem->evaluateSolution(primeS);
 
         if (accept(SCost, primeSCost, T))
@@ -82,7 +82,7 @@ void SimulatedAnnealing::solve(float maxT, float minT, float k)
     mSolution = bestS;
 }
 
-SolutionPtr SimulatedAnnealing::getSolution()
+common::SolutionPtr SimulatedAnnealing::getSolution()
 {
     return mSolution;
 }

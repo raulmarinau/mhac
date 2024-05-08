@@ -2,9 +2,7 @@
 #include "random/random.hpp"
 #include <memory>
 
-namespace physics
-{
-namespace SA
+namespace problems
 {
 
 TSP::TSP(const Cities& cities)
@@ -12,7 +10,7 @@ TSP::TSP(const Cities& cities)
     mCities = cities;
 }
 
-float TSP::evaluateSolution(SolutionPtr sol)
+float TSP::evaluateSolution(common::SolutionPtr sol)
 {
     TSSPtr tss = std::dynamic_pointer_cast<TSS>(sol);
     float ev = 0;
@@ -25,14 +23,14 @@ float TSP::evaluateSolution(SolutionPtr sol)
     return ev;
 }
 
-SolutionPtr TSP::generateInitialSolution()
+common::SolutionPtr TSP::generateInitialSolution()
 {
     TSSPtr tss = std::make_shared<TSS>();
     tss->tour = mhac_random::sample(mCities.size(), mCities.size());
     return tss;
 }
 
-SolutionPtr TSP::generateNewSolution(SolutionPtr initialSol)
+common::SolutionPtr TSP::generateNewSolution(common::SolutionPtr initialSol)
 {
     TSSPtr tssInitial = std::dynamic_pointer_cast<TSS>(initialSol);
     TSSPtr tssNew = std::make_shared<TSS>();
@@ -51,5 +49,4 @@ SolutionPtr TSP::generateNewSolution(SolutionPtr initialSol)
     return tssNew;
 }
 
-} // namespace SA
-} // namespace physics
+} // namespace problems

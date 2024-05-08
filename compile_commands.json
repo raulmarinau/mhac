@@ -13,48 +13,29 @@
             "-Iinclude",
             "-o",
             "build/mhac.so",
-            "src/logger/logger.cpp"
-        ],
-        "directory": "/home/marin/projects/mhac",
-        "file": "src/logger/logger.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-g",
-            "-O3",
-            "-Wall",
-            "-std=c++11",
-            "-fPIC",
-            "-I/usr/include/python3.8",
-            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
-            "-Iinclude",
-            "-o",
-            "build/mhac.so",
-            "src/random/random.cpp"
-        ],
-        "directory": "/home/marin/projects/mhac",
-        "file": "src/random/random.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-g",
-            "-O3",
-            "-Wall",
-            "-std=c++11",
-            "-fPIC",
-            "-I/usr/include/python3.8",
-            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
-            "-Iinclude",
-            "-o",
-            "build/mhac.so",
             "src/bindings.cpp"
         ],
         "directory": "/home/marin/projects/mhac",
         "file": "src/bindings.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-g",
+            "-O3",
+            "-Wall",
+            "-std=c++11",
+            "-fPIC",
+            "-I/usr/include/python3.8",
+            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
+            "-Iinclude",
+            "-o",
+            "build/mhac.so",
+            "src/logger/logger.cpp"
+        ],
+        "directory": "/home/marin/projects/mhac",
+        "file": "src/logger/logger.cpp"
     },
     {
         "arguments": [
@@ -93,5 +74,24 @@
         ],
         "directory": "/home/marin/projects/mhac",
         "file": "src/problems/TSP.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-g",
+            "-O3",
+            "-Wall",
+            "-std=c++11",
+            "-fPIC",
+            "-I/usr/include/python3.8",
+            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
+            "-Iinclude",
+            "-o",
+            "build/mhac.so",
+            "src/random/random.cpp"
+        ],
+        "directory": "/home/marin/projects/mhac",
+        "file": "src/random/random.cpp"
     }
 ]

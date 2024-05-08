@@ -34,76 +34,34 @@
 
 #include <memory>
 
-#include <pybind11/pybind11.h>
+#include "common.hpp"
 
 namespace physics
 {
 namespace SA
 {
 
-class Solution
-{
-public:
-    virtual ~Solution() = default;
-};
-using SolutionPtr = std::shared_ptr<Solution>;
-
-
-class Problem
-{
-public:
-    Problem() = default;
-    Problem(const Problem&) = delete;
-    Problem(Problem&&) = delete;
-    Problem& operator=(const Problem&) = delete;
-    Problem& operator=(Problem&&) = delete;
-    virtual ~Problem() = default;
-
-    virtual SolutionPtr generateInitialSolution() = 0;
-    virtual SolutionPtr generateNewSolution(SolutionPtr) = 0;
-    virtual float evaluateSolution(SolutionPtr) = 0;
-};
-using ProblemPtr = std::shared_ptr<Problem>;
-
-class PyProblem : public Problem
-{
-public:
-    using Problem::Problem;
-
-    SolutionPtr generateInitialSolution() override { 
-        PYBIND11_OVERRIDE_PURE(SolutionPtr, Problem, generateInitialSolution);
-    }
-    SolutionPtr generateNewSolution(SolutionPtr sol) override {
-        PYBIND11_OVERRIDE_PURE(SolutionPtr, Problem, generateNewSolution, sol);
-    }
-    float evaluateSolution(SolutionPtr sol) override {
-        PYBIND11_OVERRIDE_PURE(float, Problem, evaluateSolution, sol);
-    }
-};
-using PyProblemPtr = std::shared_ptr<PyProblem>;
-
-
 class SimulatedAnnealing
 {
 public:
     SimulatedAnnealing() = delete;
-    explicit SimulatedAnnealing(ProblemPtr);
+    explicit SimulatedAnnealing(common::ProblemPtr);
     SimulatedAnnealing(const SimulatedAnnealing&) = delete;
     SimulatedAnnealing(SimulatedAnnealing&&) = delete;
     SimulatedAnnealing& operator=(const SimulatedAnnealing&) = delete;
     SimulatedAnnealing& operator=(SimulatedAnnealing&&) = delete;
     virtual ~SimulatedAnnealing() = default;
 
-    void solve(float maxT, float minT, float k=0.9995);
-    SolutionPtr getSolution();
+    void solve(float maxT, float minT, float k);
+    common::SolutionPtr getSolution();
 
 private:
     float updateTemp(float T);
     bool accept(float currCost, float newCost, float T);
 
     float mK;
-    SolutionPtr mSolution;
-    ProblemPtr mProblem;
+    common::SolutionPtr mSolution;
+    common::ProblemPtr mProblem;
 };
 
 } // namespace SA
