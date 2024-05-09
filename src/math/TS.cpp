@@ -29,12 +29,12 @@ TabuSearch::TabuSearch(common::ProblemPtr probType)
 
 bool TabuSearch::inTabuList(const common::SolutionPtr& newSol)
 {
-    return std::any_of(tabuList.begin(), tabuList.end(), [&newSol](const common::SolutionPtr& tabuListMember){
-        return newSol->isEqual(*tabuListMember);
+    return std::any_of(mTabuList.begin(), mTabuList.end(), [&newSol](const common::SolutionPtr& mTabuListMember){
+        return newSol->isEqual(*mTabuListMember);
     });
 }
 
-void TabuSearch::solve(int iterations, int tabuListSize, int neighborhoodSize)
+void TabuSearch::solve(int iterations, int maxmTabuListSize, int neighborhoodSize)
 {
     common::SolutionPtr S = mProblem->generateInitialSolution();
     float SCost = mProblem->evaluateSolution(S);
@@ -42,67 +42,57 @@ void TabuSearch::solve(int iterations, int tabuListSize, int neighborhoodSize)
     common::SolutionPtr bestS = S;
     float bestSCost = SCost;
 
-    tabuList.push_back(S);
+    mTabuList.push_back(S);
 
     for (int iter = 0; iter < iterations; iter++)
     {
-        common::SolutionVec neighborhood;
+        common::SolutionPtr targetNeighbor = mProblem->generateNewSolution(S);
+        float targetNeighborCost = mProblem->evaluateSolution(targetNeighbor);
 
         for (int i = 0; i < neighborhoodSize; i++)
         {
-            auto neighbor = mProblem->generateNewSolution(S);
-            float neighborCost = mProblem->evaluateSolution(neighbor);
+            common::SolutionPtr newNeighbor = mProblem->generateNewSolution(S);
+            float newNeighborCost =  mProblem->evaluateSolution(newNeighbor);
 
-            if (!inTabuList(neighbor) && neighborCost < SCost)
+            if (!inTabuList(newNeighbor) && newNeighborCost < targetNeighborCost)
             {
-                neighborhood.push_back((neighbor));
+                targetNeighbor = newNeighbor;
+                targetNeighborCost = newNeighborCost;
             }
         }
 
-        common::SolutionPtr bestNeighbor;
-        float bestNeighborCost = mProblem->evaluateSolution(*neighborhood.begin());
-
-        for (const common::SolutionPtr& sol : neighborhood)
+        if (targetNeighborCost < SCost)
         {
-            float cost = mProblem->evaluateSolution(sol);
-            if (cost < bestNeighborCost)
-            {
-                bestNeighbor = sol;
-                bestNeighborCost = cost;
-            } 
-        }
+            S = targetNeighbor;
+            SCost = targetNeighborCost;
 
-        S = bestNeighbor;
-        SCost = bestNeighborCost;
+            if ((int) mTabuList.size() > maxmTabuListSize)
+            {
+                mTabuList.erase(mTabuList.begin());
+            }
+
+            mTabuList.push_back(S);
+        }
 
         if (SCost < bestSCost)
         {
             bestS = S;
             bestSCost = SCost;
         }
-
-        // this ensures that the search does not
-        // cycle back to recent solutions
-        tabuList.push_back(S);
-
-        if ((int) tabuList.size() > tabuListSize)
-        {
-            tabuList.erase(tabuList.begin());
-        }
-        mSolution = bestS;
-
-        // breaks the loop if the cost of the best neighbor found
-        // in the current iteration equals the current best cost
-        // found over all iterations
-        if (bestSCost == bestNeighborCost)
-            break;
     }
 
+    mSolution = bestS;
+    mSolutionCost = bestSCost;
 }
 
 common::SolutionPtr TabuSearch::getSolution()
 {
     return mSolution;
+}
+
+float TabuSearch::getSolutionCost()
+{
+    return mSolutionCost;
 }
 
 } // namespace TS

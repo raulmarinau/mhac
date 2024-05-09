@@ -54,14 +54,17 @@ public:
 
     void solve(float maxT, float minT, float k);
     common::SolutionPtr getSolution();
+    float getSolutionCost();
 
 private:
     float updateTemp(float T);
     bool accept(float currCost, float newCost, float T);
 
     float mK;
-    common::SolutionPtr mSolution;
+
     common::ProblemPtr mProblem;
+    common::SolutionPtr mSolution;
+    float mSolutionCost;
 };
 
 } // namespace SA

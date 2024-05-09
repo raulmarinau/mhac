@@ -80,11 +80,17 @@ void SimulatedAnnealing::solve(float maxT, float minT, float k)
     }
 
     mSolution = bestS;
+    mSolutionCost = bestSCost;
 }
 
 common::SolutionPtr SimulatedAnnealing::getSolution()
 {
     return mSolution;
+}
+
+float SimulatedAnnealing::getSolutionCost()
+{
+    return mSolutionCost;
 }
 
 } // namespace SA

@@ -19,15 +19,18 @@ public:
     TabuSearch& operator=(TabuSearch&&) = delete;
     virtual ~TabuSearch() = default;
 
-    void solve(int iterations, int tabuListSize, int neighborhoodSize);
+    void solve(int iterations, int maxTabuListSize, int neighborhoodSize);
     common::SolutionPtr getSolution();
+    float getSolutionCost();
 
 private:
     bool inTabuList(const common::SolutionPtr&);
 
-    common::SolutionVec tabuList;
-    common::SolutionPtr mSolution;
+    common::SolutionVec mTabuList;
+
     common::ProblemPtr mProblem;
+    common::SolutionPtr mSolution;
+    float mSolutionCost;
 };
 
 } // namespace TS

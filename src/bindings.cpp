@@ -37,16 +37,16 @@ PYBIND11_MODULE(mhac, m)
     py::module m_physics = m.def_submodule("physics");
 
     py::class_<physics::SA::SimulatedAnnealing>(m_physics, "SimulatedAnnealing")
-        .def(py::init<common::ProblemPtr>())
-        .def("solve", &physics::SA::SimulatedAnnealing::solve)
+        .def(py::init<common::ProblemPtr>(), py::arg("problem"))
+        .def("solve", &physics::SA::SimulatedAnnealing::solve, py::arg("maxT"), py::arg("minT"), py::arg("k"))
         .def("getSolution", &physics::SA::SimulatedAnnealing::getSolution);
 
     // import mhac.math
     py::module m_math = m.def_submodule("math");
 
     py::class_<math::TS::TabuSearch>(m_math, "TabuSearch")
-        .def(py::init<common::ProblemPtr>())
-        .def("solve", &math::TS::TabuSearch::solve)
+        .def(py::init<common::ProblemPtr>(), py::arg("problem"))
+        .def("solve", &math::TS::TabuSearch::solve, py::arg("iterations"), py::arg("maxTabuListSize"), py::arg("neighborhoodSize"))
         .def("getSolution", &math::TS::TabuSearch::getSolution);
 
     // import mhac.problems
@@ -61,7 +61,7 @@ PYBIND11_MODULE(mhac, m)
     py::bind_vector<problems::tsp::Cities>(m_problems_tsp, "Cities");
 
     py::class_<problems::tsp::TSP, common::Problem, problems::tsp::TSPPtr>(m_problems_tsp, "TSP")
-        .def(py::init<const problems::tsp::Cities&>())
+        .def(py::init<const problems::tsp::Cities&>(), py::arg("cities"))
         .def_readwrite("mCities", &problems::tsp::TSP::mCities);
 
     py::class_<problems::tsp::TSS, common::Solution, problems::tsp::TSSPtr>(m_problems_tsp, "TSS")
