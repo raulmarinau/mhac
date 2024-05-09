@@ -4,21 +4,23 @@
 #include <pybind11/stl_bind.h>
 #include <pybind11/stl.h>
 
+#include "common.hpp"
+#include "math/TS.hpp"
 #include "physics/SA.hpp"
 #include "problems/TSP.hpp"
 
 namespace py = pybind11;
 
-PYBIND11_MAKE_OPAQUE(problems::Cities);
+PYBIND11_MAKE_OPAQUE(problems::tsp::Cities);
 PYBIND11_MAKE_OPAQUE(std::vector<int>);  // without this and the binding, int vector TSP::tour is immutable
 
 PYBIND11_MODULE(mhac, m)
 {
-    // import mhac
     using VectorInt = std::vector<int>;
     py::bind_vector<VectorInt>(m, "VectorInt");
     py::implicitly_convertible<py::iterable, VectorInt>();
 
+    // import mhac
     // import mhac.common
     py::module m_common = m.def_submodule("common");
 
@@ -28,7 +30,7 @@ PYBIND11_MODULE(mhac, m)
         .def("generateNewSolution", &common::Problem::generateNewSolution)
         .def("evaluateSolution", &common::Problem::evaluateSolution);
 
-    py::class_<common::Solution, common::SolutionPtr>(m_common, "Solution")
+    py::class_<common::Solution, common::PySolution, common::SolutionPtr>(m_common, "Solution")
         .def(py::init<>());
     
     // import mhac.physics
@@ -39,21 +41,30 @@ PYBIND11_MODULE(mhac, m)
         .def("solve", &physics::SA::SimulatedAnnealing::solve)
         .def("getSolution", &physics::SA::SimulatedAnnealing::getSolution);
 
+    // import mhac.math
+    py::module m_math = m.def_submodule("math");
+
+    py::class_<math::TS::TabuSearch>(m_math, "TabuSearch")
+        .def(py::init<common::ProblemPtr>())
+        .def("solve", &math::TS::TabuSearch::solve)
+        .def("getSolution", &math::TS::TabuSearch::getSolution);
+
     // import mhac.problems
     py::module m_problems = m.def_submodule("problems");
+    py::module m_problems_tsp = m_problems.def_submodule("tsp");
     
-    py::class_<problems::City>(m_problems, "City")
+    py::class_<problems::tsp::City>(m_problems_tsp, "City")
         .def(py::init<int, int>())
-        .def_readwrite("x", &problems::City::x)
-        .def_readwrite("y", &problems::City::y)
-        .def("distance", &problems::City::distance);
-    py::bind_vector<problems::Cities>(m_problems, "Cities");
+        .def_readwrite("x", &problems::tsp::City::x)
+        .def_readwrite("y", &problems::tsp::City::y)
+        .def("distance", &problems::tsp::City::distance);
+    py::bind_vector<problems::tsp::Cities>(m_problems_tsp, "Cities");
 
-    py::class_<problems::TSP, common::Problem, problems::TSPPtr>(m_problems, "TSP")
-        .def(py::init<const problems::Cities&>())
-        .def_readwrite("mCities", &problems::TSP::mCities);
+    py::class_<problems::tsp::TSP, common::Problem, problems::tsp::TSPPtr>(m_problems_tsp, "TSP")
+        .def(py::init<const problems::tsp::Cities&>())
+        .def_readwrite("mCities", &problems::tsp::TSP::mCities);
 
-    py::class_<problems::TSS, common::Solution, problems::TSSPtr>(m_problems, "TSS")
+    py::class_<problems::tsp::TSS, common::Solution, problems::tsp::TSSPtr>(m_problems_tsp, "TSS")
         .def(py::init<>())
-        .def_readwrite("tour", &problems::TSS::tour);
+        .def_readwrite("tour", &problems::tsp::TSS::tour);
 }

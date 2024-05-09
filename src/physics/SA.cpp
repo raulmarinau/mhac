@@ -22,7 +22,7 @@ SimulatedAnnealing::SimulatedAnnealing(common::ProblemPtr probType)
 {
     globalLogger->set_level(spdlog::level::trace);
     globalLogger->flush_on(spdlog::level::info);
-    globalLogger->debug("Initializing SA");
+    globalLogger->debug("Initializing SimulatedAnnealing");
 }
 
 bool SimulatedAnnealing::accept(float currCost, float newCost, float T)

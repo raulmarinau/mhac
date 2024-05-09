@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def read_TSP_data(filepath="../data/tsp/eil101.tsp"):
-    cities = mhac.physics.examples.Cities()
+def read_TSP_data(filepath="../../data/tsp/eil101.tsp"):
+    cities = mhac.problems.tsp.Cities()
 
     with open(filepath, 'r') as infile:
         Name = infile.readline().strip().split()[1] # NAME
@@ -20,7 +20,7 @@ def read_TSP_data(filepath="../data/tsp/eil101.tsp"):
 
         for i in range(int(Dimension)):
             coords = infile.readline().strip().split()[1:]
-            city = mhac.physics.examples.City(int(coords[0]), int(coords[1]))
+            city = mhac.problems.tsp.City(int(coords[0]), int(coords[1]))
             cities.append(city)
 
     return cities

@@ -1,0 +1,3 @@
+gdb python3
+(gdb) set environment PYTHONPATH=/home/marin/projects/mhac/build
+(gdb) run mhac_script.py

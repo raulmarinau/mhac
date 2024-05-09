@@ -1,9 +1,22 @@
-#include "problems/TSP.hpp"
-#include "random/random.hpp"
 #include <memory>
+#include <string>
+
+#include "common.hpp"
+#include "random/random.hpp"
+#include "logger/logger.hpp"
+
+#include "problems/TSP.hpp"
 
 namespace problems
 {
+namespace tsp
+{
+
+bool TSS::isEqual(const Solution& other) const
+{
+    const TSS* otherTSS = dynamic_cast<const TSS*>(&other);
+    return otherTSS && this->tour == otherTSS->tour;
+}
 
 TSP::TSP(const Cities& cities)
 {
@@ -49,4 +62,5 @@ common::SolutionPtr TSP::generateNewSolution(common::SolutionPtr initialSol)
     return tssNew;
 }
 
+} // namespace tsp
 } // namespace problems

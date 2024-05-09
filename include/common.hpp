@@ -1,6 +1,7 @@
 #ifndef MHAC_COMMON_HPP
 #define MHAC_COMMON_HPP
 
+#include <vector>
 #include <memory>
 
 #include <pybind11/pybind11.h>
@@ -12,9 +13,21 @@ class Solution
 {
 public:
     virtual ~Solution() = default;
+    virtual bool isEqual(const Solution&) const = 0;
 };
 using SolutionPtr = std::shared_ptr<Solution>;
+using SolutionVec = std::vector<SolutionPtr>;
 
+class PySolution : public Solution
+{
+public:
+    using Solution::Solution;
+
+    bool isEqual(const Solution& sol) const override {
+        PYBIND11_OVERRIDE_PURE(bool, Solution, isEqual, sol);
+    }
+};
+using PySolutionPtr = std::shared_ptr<PySolution>;
 
 class Problem
 {

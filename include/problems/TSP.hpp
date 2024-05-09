@@ -9,6 +9,8 @@
 
 namespace problems
 {
+namespace tsp
+{
 
 struct City
 {
@@ -28,6 +30,7 @@ using Cities = std::vector<City>;
 class TSS: public common::Solution
 {
 public:
+    bool isEqual(const Solution&) const override;
     std::vector<int> tour;
 };
 using TSSPtr = std::shared_ptr<TSS>;
@@ -47,6 +50,7 @@ public:
 };
 using TSPPtr = std::shared_ptr<TSP>;
 
+} // namespace tsp
 } // namespace problems
 
 #endif // MHAC_PROBLEMS_TSP_HPP
