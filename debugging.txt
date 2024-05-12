@@ -1,3 +1,4 @@
 gdb python3
-(gdb) set environment PYTHONPATH=/home/marin/projects/mhac/build
+(gdb) set environment PYTHONPATH=/home/marin/projects/mhac/build/mhac.debug
 (gdb) run mhac_script.py
+(gdb) break src/problems/TSP.cpp:100

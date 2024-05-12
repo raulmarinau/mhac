@@ -52,19 +52,14 @@ public:
     SimulatedAnnealing& operator=(SimulatedAnnealing&&) = delete;
     virtual ~SimulatedAnnealing() = default;
 
-    void solve(float maxT, float minT, float k);
-    common::SolutionPtr getSolution();
-    float getSolutionCost();
+    common::SolutionPtr solve(float maxT, float minT, float k);
 
 private:
     float updateTemp(float T);
     bool accept(float currCost, float newCost, float T);
 
     float mK;
-
     common::ProblemPtr mProblem;
-    common::SolutionPtr mSolution;
-    float mSolutionCost;
 };
 
 } // namespace SA

@@ -47,50 +47,39 @@ float SimulatedAnnealing::updateTemp(float T)
     return mK*T;
 }
 
-void SimulatedAnnealing::solve(float maxT, float minT, float k)
+common::SolutionPtr SimulatedAnnealing::solve(float maxT, float minT, float k)
 {
     mK = k;
     common::SolutionPtr S = mProblem->generateInitialSolution();
-    float SCost = mProblem->evaluateSolution(S);
+    S->cost = mProblem->evaluateSolution(S);
 
     common::SolutionPtr bestS = S;
-    float bestSCost = SCost;
+    bestS->cost = S->cost;
 
     float T = maxT;
 
     while (T > minT)
     {
         common::SolutionPtr primeS = mProblem->generateNewSolution(S);
-        float primeSCost = mProblem->evaluateSolution(primeS);
+        primeS->cost = mProblem->evaluateSolution(primeS);
 
-        if (accept(SCost, primeSCost, T))
+        if (accept(S->cost, primeS->cost, T))
         {
             S = primeS;
-            SCost = primeSCost;
+            S->cost = primeS->cost;
         }
 
-        if (SCost < bestSCost)
+        if (S->cost < bestS->cost)
         {
             bestS = S;
-            bestSCost = SCost;
-            globalLogger->info("Found better solution with cost {}", bestSCost);
+            bestS->cost = S->cost;
+            globalLogger->info("Found better solution with cost {}", bestS->cost);
         }
 
         T = updateTemp(T);
     }
 
-    mSolution = bestS;
-    mSolutionCost = bestSCost;
-}
-
-common::SolutionPtr SimulatedAnnealing::getSolution()
-{
-    return mSolution;
-}
-
-float SimulatedAnnealing::getSolutionCost()
-{
-    return mSolutionCost;
+    return bestS;
 }
 
 } // namespace SA

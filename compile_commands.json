@@ -4,7 +4,7 @@
             "c++",
             "-c",
             "-g",
-            "-O3",
+            "-O0",
             "-Wall",
             "-std=c++11",
             "-fPIC",
@@ -13,36 +13,17 @@
             "-Iinclude",
             "-o",
             "build/mhac.so",
-            "src/math/TS.cpp"
+            "src/evolutionary/GA.cpp"
         ],
         "directory": "/home/marin/projects/mhac",
-        "file": "src/math/TS.cpp"
+        "file": "src/evolutionary/GA.cpp"
     },
     {
         "arguments": [
             "c++",
             "-c",
             "-g",
-            "-O3",
-            "-Wall",
-            "-std=c++11",
-            "-fPIC",
-            "-I/usr/include/python3.8",
-            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
-            "-Iinclude",
-            "-o",
-            "build/mhac.so",
-            "src/logger/logger.cpp"
-        ],
-        "directory": "/home/marin/projects/mhac",
-        "file": "src/logger/logger.cpp"
-    },
-    {
-        "arguments": [
-            "c++",
-            "-c",
-            "-g",
-            "-O3",
+            "-O0",
             "-Wall",
             "-std=c++11",
             "-fPIC",
@@ -61,7 +42,7 @@
             "c++",
             "-c",
             "-g",
-            "-O3",
+            "-O0",
             "-Wall",
             "-std=c++11",
             "-fPIC",
@@ -70,17 +51,17 @@
             "-Iinclude",
             "-o",
             "build/mhac.so",
-            "src/physics/SA.cpp"
+            "src/bindings.cpp"
         ],
         "directory": "/home/marin/projects/mhac",
-        "file": "src/physics/SA.cpp"
+        "file": "src/bindings.cpp"
     },
     {
         "arguments": [
             "c++",
             "-c",
             "-g",
-            "-O3",
+            "-O0",
             "-Wall",
             "-std=c++11",
             "-fPIC",
@@ -99,7 +80,7 @@
             "c++",
             "-c",
             "-g",
-            "-O3",
+            "-O0",
             "-Wall",
             "-std=c++11",
             "-fPIC",
@@ -108,9 +89,47 @@
             "-Iinclude",
             "-o",
             "build/mhac.so",
-            "src/bindings.cpp"
+            "src/physics/SA.cpp"
         ],
         "directory": "/home/marin/projects/mhac",
-        "file": "src/bindings.cpp"
+        "file": "src/physics/SA.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-g",
+            "-O0",
+            "-Wall",
+            "-std=c++11",
+            "-fPIC",
+            "-I/usr/include/python3.8",
+            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
+            "-Iinclude",
+            "-o",
+            "build/mhac.so",
+            "src/logger/logger.cpp"
+        ],
+        "directory": "/home/marin/projects/mhac",
+        "file": "src/logger/logger.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-g",
+            "-O0",
+            "-Wall",
+            "-std=c++11",
+            "-fPIC",
+            "-I/usr/include/python3.8",
+            "-I/home/marin/.local/lib/python3.8/site-packages/pybind11/include",
+            "-Iinclude",
+            "-o",
+            "build/mhac.so",
+            "src/math/TS.cpp"
+        ],
+        "directory": "/home/marin/projects/mhac",
+        "file": "src/math/TS.cpp"
     }
 ]

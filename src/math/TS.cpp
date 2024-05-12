@@ -34,37 +34,37 @@ bool TabuSearch::inTabuList(const common::SolutionPtr& newSol)
     });
 }
 
-void TabuSearch::solve(int iterations, int maxmTabuListSize, int neighborhoodSize)
+common::SolutionPtr TabuSearch::solve(int iterations, int maxmTabuListSize, int neighborhoodSize)
 {
     common::SolutionPtr S = mProblem->generateInitialSolution();
-    float SCost = mProblem->evaluateSolution(S);
+    S->cost = mProblem->evaluateSolution(S);
 
     common::SolutionPtr bestS = S;
-    float bestSCost = SCost;
+    bestS->cost = S->cost;
 
     mTabuList.push_back(S);
 
     for (int iter = 0; iter < iterations; iter++)
     {
         common::SolutionPtr targetNeighbor = mProblem->generateNewSolution(S);
-        float targetNeighborCost = mProblem->evaluateSolution(targetNeighbor);
+        targetNeighbor->cost = mProblem->evaluateSolution(targetNeighbor);
 
         for (int i = 0; i < neighborhoodSize; i++)
         {
             common::SolutionPtr newNeighbor = mProblem->generateNewSolution(S);
-            float newNeighborCost =  mProblem->evaluateSolution(newNeighbor);
+            newNeighbor->cost =  mProblem->evaluateSolution(newNeighbor);
 
-            if (!inTabuList(newNeighbor) && newNeighborCost < targetNeighborCost)
+            if (!inTabuList(newNeighbor) && newNeighbor->cost < targetNeighbor->cost)
             {
                 targetNeighbor = newNeighbor;
-                targetNeighborCost = newNeighborCost;
+                targetNeighbor->cost = newNeighbor->cost;
             }
         }
 
-        if (targetNeighborCost < SCost)
+        if (targetNeighbor->cost < S->cost)
         {
             S = targetNeighbor;
-            SCost = targetNeighborCost;
+            S->cost = targetNeighbor->cost;
 
             if ((int) mTabuList.size() > maxmTabuListSize)
             {
@@ -74,25 +74,14 @@ void TabuSearch::solve(int iterations, int maxmTabuListSize, int neighborhoodSiz
             mTabuList.push_back(S);
         }
 
-        if (SCost < bestSCost)
+        if (S->cost < bestS->cost)
         {
             bestS = S;
-            bestSCost = SCost;
+            bestS->cost = S->cost;
         }
     }
 
-    mSolution = bestS;
-    mSolutionCost = bestSCost;
-}
-
-common::SolutionPtr TabuSearch::getSolution()
-{
-    return mSolution;
-}
-
-float TabuSearch::getSolutionCost()
-{
-    return mSolutionCost;
+    return bestS;
 }
 
 } // namespace TS

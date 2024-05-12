@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/home/marin/projects/mhac/build")
+sys.path.append("/home/marin/projects/mhac/build/debug")
 import mhac
 
 import random, copy, math
@@ -69,5 +69,5 @@ class PythonTSP(mhac.physics.Problem):
 
 problem = PythonTSP(read_TSP_data())
 SA = mhac.physics.SimulatedAnnealing(problem)
-SA.solve(1000., 0.000001)
-displayTour(problem.mCities, SA.getSolution().tour)
+sol = SA.solve(1000., 0.000001)
+displayTour(problem.mCities, sol.tour)

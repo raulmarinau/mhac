@@ -1,11 +1,10 @@
 import sys
-sys.path.append("/home/marin/projects/mhac/build/debug")
+sys.path.append("/home/marin/projects/mhac/build/debug/")
 import mhac
 
 import random, copy, math
 import matplotlib.pyplot as plt
 import numpy as np
-
 
 def read_TSP_data(filepath="../../data/tsp/eil101.tsp"):
     cities = mhac.problems.tsp.Cities()
@@ -25,7 +24,6 @@ def read_TSP_data(filepath="../../data/tsp/eil101.tsp"):
 
     return cities
 
-
 def displayTour(cities, solution):
     plt.figure(figsize = (16,8))
     N = len(cities)
@@ -34,8 +32,9 @@ def displayTour(cities, solution):
     plt.plot([cities[solution[i % N]].x for i in range(N+1)], [cities[solution[i % N]].y for i in range(N+1)], 'bo-')
     plt.show()
 
-
-problem = mhac.problems.tsp.TSP(read_TSP_data())
-TS = mhac.math.TabuSearch(problem)
-sol = TS.solve(1000, 10, 20)
+problem = mhac.problems.tsp.GA_TSP(read_TSP_data())
+GA = mhac.evolutionary.GeneticAlgorithm(problem)
+GA.setTournamentSize(5)
+sol = GA.solve(100, 10, 0.1, mhac.evolutionary.SelectionType.TOURNAMENT)
 displayTour(problem.mCities, sol.tour)
+sol.cost

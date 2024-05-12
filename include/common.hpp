@@ -14,6 +14,7 @@ class Solution
 public:
     virtual ~Solution() = default;
     virtual bool isEqual(const Solution&) const = 0;
+    float cost = 0;
 };
 using SolutionPtr = std::shared_ptr<Solution>;
 using SolutionVec = std::vector<SolutionPtr>;
@@ -45,7 +46,7 @@ public:
 };
 using ProblemPtr = std::shared_ptr<Problem>;
 
-class PyProblem : public Problem
+class PyProblem : virtual public Problem
 {
 public:
     using Problem::Problem;

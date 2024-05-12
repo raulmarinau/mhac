@@ -5,7 +5,8 @@
 #include <vector>
 #include <cmath>
 
-#include "physics/SA.hpp"
+#include "common.hpp"
+#include "evolutionary/GA.hpp"
 
 namespace problems
 {
@@ -36,7 +37,7 @@ public:
 using TSSPtr = std::shared_ptr<TSS>;
 
 // Traveling Salesman Problem
-class TSP: public common::Problem
+class TSP: virtual public common::Problem
 {
 public:
     TSP() = delete;
@@ -49,6 +50,18 @@ public:
     Cities mCities;
 };
 using TSPPtr = std::shared_ptr<TSP>;
+
+// Genetic Algorithm Traveling Salesman Problem
+class GA_TSP : public evolutionary::GA::Problem, public TSP
+{
+public:
+    GA_TSP() = delete;
+    explicit GA_TSP(const Cities&);
+
+    void crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2) override;
+    void mutation(common::SolutionPtr outChild, float mutationChance) override;
+};
+using GA_TSPPtr = std::shared_ptr<GA_TSP>;
 
 } // namespace tsp
 } // namespace problems
