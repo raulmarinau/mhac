@@ -13,7 +13,8 @@ class Problem : virtual public common::Problem
 {
 public:
     virtual void crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2) = 0;
-    virtual void mutation(common::SolutionPtr outChild, float mutationChance) = 0;
+    virtual void mutation(common::SolutionPtr& outChild, float mutationChance) = 0;
+    virtual void repair(common::SolutionPtr&) = 0;
 };
 using ProblemPtr = std::shared_ptr<Problem>;
 
@@ -27,9 +28,14 @@ public:
         PYBIND11_OVERRIDE_PURE(void, Problem, crossover, parent1, parent2, outChild1, outChild2);
     }
 
-    void mutation(common::SolutionPtr outChild, float mutationChance) override
+    void mutation(common::SolutionPtr& outChild, float mutationChance) override
     {
         PYBIND11_OVERRIDE_PURE(void, Problem, mutation, outChild, mutationChance);
+    }
+
+    void repair(common::SolutionPtr& sol) override
+    {
+        PYBIND11_OVERRIDE_PURE(void, Problem, repair, sol);
     }
 };
 using PyProblemPtr = std::shared_ptr<PyProblem>;

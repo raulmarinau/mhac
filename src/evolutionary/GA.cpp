@@ -17,7 +17,7 @@ GeneticAlgorithm::GeneticAlgorithm(ProblemPtr probType)
     :mProblem(probType), mTournamentSize(0)
 {
     globalLogger->set_level(spdlog::level::trace);
-    globalLogger->flush_on(spdlog::level::info);
+    globalLogger->flush_on(spdlog::level::debug);
     globalLogger->debug("Initializing GeneticAlgorithm");
 }
 
@@ -25,21 +25,18 @@ common::SolutionPtr GeneticAlgorithm::tournamentSelection()
 {
     std::vector<int> indexes = mhac_random::sample(mPopulation.size(), mTournamentSize);
 
-    int maxElement = std::numeric_limits<int>::min();
-    int indexOfMax = -1;
+    int minElement = std::numeric_limits<int>::max();
+    int indexOfMin = -1;
 
-    for (int i = 0; i < (int) indexes.size(); i++)
+    for (const int index: indexes)
     {
-        int currentIndex = indexes[i];
-        if (mPopulation[currentIndex]->cost > maxElement)
+        if (mPopulation[index]->cost < minElement)
         {
-            maxElement = mPopulation[currentIndex]->cost;
-            indexOfMax = i;
+            minElement = mPopulation[index]->cost;
+            indexOfMin = index;
         }
     }    
-    globalLogger->debug("Index used: ", indexOfMax);
-    // return mPopulation[indexOfMax];
-    return mPopulation[0];
+    return mPopulation[indexOfMin];
 }
 
 void GeneticAlgorithm::setTournamentSize(int size)
@@ -57,7 +54,7 @@ common::SolutionPtr GeneticAlgorithm::solve(int generations, int populationSize,
         mPopulation.push_back(sol);
     }
 
-    for (int iter = 0; iter < generations; iter++)
+    for (int gen = 0; gen < generations; gen++)
     {
         common::SolutionVec children;
 
@@ -66,7 +63,8 @@ common::SolutionPtr GeneticAlgorithm::solve(int generations, int populationSize,
             common::SolutionPtr parent1, parent2;
 
             // selection
-            switch (selectionType) {
+            switch (selectionType)
+            {
                 case SelectionType::TOURNAMENT:
                 {
                     parent1 = tournamentSelection();
@@ -83,7 +81,6 @@ common::SolutionPtr GeneticAlgorithm::solve(int generations, int populationSize,
             mProblem->crossover(parent1, parent2, child1, child2);
 
             // mutation
-            // TODO: problem, child empty
             mProblem->mutation(child1, mutationChance);
             mProblem->mutation(child2, mutationChance);
 
@@ -98,7 +95,7 @@ common::SolutionPtr GeneticAlgorithm::solve(int generations, int populationSize,
     }
 
     // return the best from the population
-    return *std::max_element(mPopulation.begin(), mPopulation.end(), [](const common::SolutionPtr& a, const common::SolutionPtr& b) {
+    return *std::min_element(mPopulation.begin(), mPopulation.end(), [](const common::SolutionPtr& a, const common::SolutionPtr& b) {
         return a->cost < b->cost;
     });
 }

@@ -33,6 +33,7 @@ class TSS: public common::Solution
 public:
     bool isEqual(const Solution&) const override;
     std::vector<int> tour;
+    std::string print();
 };
 using TSSPtr = std::shared_ptr<TSS>;
 
@@ -59,7 +60,8 @@ public:
     explicit GA_TSP(const Cities&);
 
     void crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2) override;
-    void mutation(common::SolutionPtr outChild, float mutationChance) override;
+    void mutation(common::SolutionPtr& outChild, float mutationChance) override;
+    void repair(common::SolutionPtr&) override;
 };
 using GA_TSPPtr = std::shared_ptr<GA_TSP>;
 

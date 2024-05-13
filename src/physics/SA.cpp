@@ -21,7 +21,7 @@ SimulatedAnnealing::SimulatedAnnealing(common::ProblemPtr probType)
     :mProblem(probType)
 {
     globalLogger->set_level(spdlog::level::trace);
-    globalLogger->flush_on(spdlog::level::info);
+    globalLogger->flush_on(spdlog::level::debug);
     globalLogger->debug("Initializing SimulatedAnnealing");
 }
 

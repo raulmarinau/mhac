@@ -58,7 +58,8 @@ PYBIND11_MODULE(mhac, m)
         // .def("generateNewSolution", &evolutionary::GA::Problem::generateNewSolution)
         // .def("evaluateSolution", &evolutionary::GA::Problem::evaluateSolution)
         .def("crossover", &evolutionary::GA::Problem::crossover)
-        .def("mutation", &evolutionary::GA::Problem::mutation);
+        .def("mutation", &evolutionary::GA::Problem::mutation)
+        .def("repair", &evolutionary::GA::Problem::repair);
 
     py::enum_<evolutionary::GA::SelectionType>(m_evolutionary, "SelectionType")
         .value("TOURNAMENT", evolutionary::GA::SelectionType::TOURNAMENT)

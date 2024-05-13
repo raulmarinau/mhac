@@ -18,6 +18,16 @@ bool TSS::isEqual(const Solution& other) const
     return otherTSS && this->tour == otherTSS->tour;
 }
 
+std::string TSS::print()
+{
+    std::string s;
+    for (int i = 0; i < (int) tour.size(); i++)
+    {
+        s += tour[i];
+    }
+    return s;
+}
+
 TSP::TSP(const Cities& cities)
 {
     mCities = cities;
@@ -67,10 +77,40 @@ GA_TSP::GA_TSP(const Cities& cities): TSP(cities)
     mCities = cities;
 }
 
+void GA_TSP::repair(common::SolutionPtr& sol)
+{
+    TSSPtr tss = std::dynamic_pointer_cast<TSS>(sol);
+    std::unordered_set<int> seen;
+    std::vector<int> missing;
+
+    // identify all duplicates and records their positions
+    for (int i = 0; i < (int) tss->tour.size(); i++)
+    {
+        if (seen.count(tss->tour[i])) {
+            missing.push_back(i);
+        }
+        else {
+            seen.insert(tss->tour[i]);
+        }
+    }
+
+    // place them in the positions of duplicates
+    for (int city = 0; city < (int) mCities.size(); city++)
+    {
+        if (!seen.count(city)) {
+            tss->tour[missing.back()] = city;
+            missing.pop_back();
+        }
+    }
+}
+
 void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2)
 {
     TSSPtr tss_parent1 = std::dynamic_pointer_cast<TSS>(parent1);
     TSSPtr tss_parent2 = std::dynamic_pointer_cast<TSS>(parent2);
+
+    globalLogger->debug("Parent1 (cost:", tss_parent1->cost, ")", tss_parent1->print());
+    globalLogger->debug("Parent2 (cost:", tss_parent2->cost, ")", tss_parent2->print());
 
     outChild1 = std::make_shared<TSS>();
     outChild2 = std::make_shared<TSS>();
@@ -90,9 +130,19 @@ void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2,
     // [cutPoint, v.size())
     std::copy(tss_parent2->tour.begin() + cutPoint, tss_parent2->tour.end(), tss_outChild1->tour.begin() + cutPoint);
     std::copy(tss_parent1->tour.begin() + cutPoint, tss_parent1->tour.end(), tss_outChild2->tour.begin() + cutPoint);
+
+    // repair
+    repair(outChild1);
+    repair(outChild2);
+    
+    tss_outChild1->cost = evaluateSolution(tss_outChild1);
+    tss_outChild2->cost = evaluateSolution(tss_outChild2);
+
+    globalLogger->debug("Child1 (cost:", tss_outChild1->cost, ")", tss_outChild1->print());
+    globalLogger->debug("Child2 (cost:", tss_outChild2->cost, ")", tss_outChild1->print());
 }
 
-void GA_TSP::mutation(common::SolutionPtr outChild, float mutationChance)
+void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
 {
     TSSPtr tss = std::dynamic_pointer_cast<TSS>(outChild);
     std::vector<int> indexes = mhac_random::sample(mCities.size(), 2);
@@ -100,7 +150,12 @@ void GA_TSP::mutation(common::SolutionPtr outChild, float mutationChance)
     int j = indexes[1];
 
     if (mhac_random::random() < mutationChance)
+    {
         std::swap(tss->tour[i], tss->tour[j]);
+        tss->cost = evaluateSolution(tss);
+
+        globalLogger->debug("Mutation (cost:", tss->cost, ")", tss->print());
+    }
 }
 
 } // namespace tsp
