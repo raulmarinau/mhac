@@ -40,7 +40,7 @@ public:
 };
 using PyProblemPtr = std::shared_ptr<PyProblem>;
 
-
+// TODO: should move selection to the problem
 enum class SelectionType
 {
     TOURNAMENT,

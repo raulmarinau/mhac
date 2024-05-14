@@ -14,6 +14,7 @@ class Solution
 public:
     virtual ~Solution() = default;
     virtual bool isEqual(const Solution&) const = 0;
+    virtual int getSize() const { return 0; }
     float cost = 0;
 };
 using SolutionPtr = std::shared_ptr<Solution>;

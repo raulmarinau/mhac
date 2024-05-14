@@ -9,6 +9,8 @@
 #include "math/TS.hpp"
 #include "physics/SA.hpp"
 #include "problems/TSP.hpp"
+#include "pybind11/cast.h"
+#include "swarm/ACO.hpp"
 
 namespace py = pybind11;
 
@@ -54,9 +56,6 @@ PYBIND11_MODULE(mhac, m)
 
     py::class_<evolutionary::GA::Problem, evolutionary::GA::PyProblem, evolutionary::GA::ProblemPtr>(m_evolutionary, "Problem")
         .def(py::init<>())
-        // .def("generateInitialSolution", &evolutionary::GA::Problem::generateInitialSolution)
-        // .def("generateNewSolution", &evolutionary::GA::Problem::generateNewSolution)
-        // .def("evaluateSolution", &evolutionary::GA::Problem::evaluateSolution)
         .def("crossover", &evolutionary::GA::Problem::crossover)
         .def("mutation", &evolutionary::GA::Problem::mutation)
         .def("repair", &evolutionary::GA::Problem::repair);
@@ -69,6 +68,18 @@ PYBIND11_MODULE(mhac, m)
         .def(py::init<evolutionary::GA::ProblemPtr>(), py::arg("problem"))
         .def("solve", &evolutionary::GA::GeneticAlgorithm::solve, py::arg("generations"), py::arg("populationSize"), py::arg("mutationChance"), py::arg("selectionType"))
         .def("setTournamentSize", &evolutionary::GA::GeneticAlgorithm::setTournamentSize, py::arg("tournamentSize"));
+
+    // import mhac.swarm
+    py::module m_swarm = m.def_submodule("swarm");
+
+    py::class_<swarm::ACO::Problem, swarm::ACO::PyProblem, swarm::ACO::ProblemPtr>(m_swarm, "Problem")
+        .def(py::init<>())
+        .def("updateAntPath", &swarm::ACO::Problem::updateAntPath)
+        .def("updatePheromoneMatrix", &swarm::ACO::Problem::updatePheromoneMatrix);
+
+    py::class_<swarm::ACO::AntColonyOptimization>(m_swarm, "AntColonyOptimization")
+        .def(py::init<swarm::ACO::ProblemPtr>(), py::arg("problem"))
+        .def("solve", &swarm::ACO::AntColonyOptimization::solve, py::arg("generations"), py::arg("colonySize"), py::arg("alpha"), py::arg("beta"), py::arg("rho"));
 
     // import mhac.problems
     py::module m_problems = m.def_submodule("problems");
@@ -88,6 +99,10 @@ PYBIND11_MODULE(mhac, m)
         .def_readwrite("mCities", &problems::tsp::TSP::mCities);
 
     py::class_<problems::tsp::GA_TSP, evolutionary::GA::Problem, problems::tsp::GA_TSPPtr>(m_problems_tsp, "GA_TSP")
+        .def(py::init<const problems::tsp::Cities&>(), py::arg("cities"))
+        .def_readwrite("mCities", &problems::tsp::TSP::mCities);
+
+    py::class_<problems::tsp::ACO_TSP, swarm::ACO::Problem, problems::tsp::ACO_TSPPtr>(m_problems_tsp, "ACO_TSP")
         .def(py::init<const problems::tsp::Cities&>(), py::arg("cities"))
         .def_readwrite("mCities", &problems::tsp::TSP::mCities);
 

@@ -7,6 +7,7 @@
 
 #include "common.hpp"
 #include "evolutionary/GA.hpp"
+#include "swarm/ACO.hpp"
 
 namespace problems
 {
@@ -27,15 +28,18 @@ struct City
 };
 using Cities = std::vector<City>;
 
+
 // Traveling Salesman Solution
 class TSS: public common::Solution
 {
 public:
     bool isEqual(const Solution&) const override;
+    int getSize() const override;
     std::vector<int> tour;
     std::string print();
 };
 using TSSPtr = std::shared_ptr<TSS>;
+
 
 // Traveling Salesman Problem
 class TSP: virtual public common::Problem
@@ -52,7 +56,8 @@ public:
 };
 using TSPPtr = std::shared_ptr<TSP>;
 
-// Genetic Algorithm Traveling Salesman Problem
+
+// Genetic Algorithm TSP
 class GA_TSP : public evolutionary::GA::Problem, public TSP
 {
 public:
@@ -64,6 +69,23 @@ public:
     void repair(common::SolutionPtr&) override;
 };
 using GA_TSPPtr = std::shared_ptr<GA_TSP>;
+
+
+// Ant Coloty Optimization TSP
+class ACO_TSP : public swarm::ACO::Problem, public TSP
+{
+public:
+    using Probabilities = std::vector<float>;
+
+    ACO_TSP() = delete;
+    explicit ACO_TSP(const Cities&);
+
+    void updateAntPath(common::SolutionPtr& ant, int node, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta);
+    void updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr& pm, float rho);
+
+    std::vector<int> mAvailableCitiesIndexes;
+};
+using ACO_TSPPtr = std::shared_ptr<ACO_TSP>;
 
 } // namespace tsp
 } // namespace problems

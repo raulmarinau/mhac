@@ -1,3 +1,4 @@
+#include <cmath>
 #include <memory>
 #include <string>
 
@@ -16,6 +17,11 @@ bool TSS::isEqual(const Solution& other) const
 {
     const TSS* otherTSS = dynamic_cast<const TSS*>(&other);
     return otherTSS && this->tour == otherTSS->tour;
+}
+
+int TSS::getSize() const
+{
+    return this->tour.size();
 }
 
 std::string TSS::print()
@@ -155,6 +161,74 @@ void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
         tss->cost = evaluateSolution(tss);
 
         globalLogger->debug("Mutation (cost:", tss->cost, ")", tss->print());
+    }
+}
+
+ACO_TSP::ACO_TSP(const Cities& cities): TSP(cities)
+{
+    mCities = cities;
+
+    for (int i = 0; i < (int) mCities.size(); i++) {
+        mAvailableCitiesIndexes.push_back(i);
+    }
+}
+
+void ACO_TSP::updateAntPath(common::SolutionPtr &ant, int node, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
+{
+    TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
+
+    // starting element
+    if (node == 1) {
+        mAvailableCitiesIndexes.erase(mAvailableCitiesIndexes.begin() + tss_ant->tour[0]);
+    }
+
+    Probabilities prob;
+    for (int i = 0; i < tss_ant->getSize(); i++) {
+        prob.push_back(0);
+    }
+
+    float sum = 0;
+
+    for (const int cindex: mAvailableCitiesIndexes) {
+        float eta = 1 / mCities[tss_ant->tour[node-1]].distance(mCities[cindex]);
+        float t = std::pow((*pm)(tss_ant->tour[node-1], cindex), alpha)  * std::pow(eta, beta);
+        sum += t;
+        prob[cindex] = t;
+    }
+
+    for (const int cindex: mAvailableCitiesIndexes) {
+        prob[cindex] /= sum;
+    }
+
+    // select the node
+    int i = 0;
+    float s = prob[0];
+    float u = mhac_random::random();
+
+    while (u > s) {
+        i++;
+        s += prob[i]; 
+    }
+
+    mAvailableCitiesIndexes.erase(mAvailableCitiesIndexes.begin() + i);
+    tss_ant->tour[node] = i;
+}
+
+void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr &pm, float rho)
+{
+    TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
+    for (int i = 0; i < pm->getSize(); i++) {
+        for (int j = 0; j < pm->getSize(); j++) {
+            float pheromoneDeposit = 0;
+
+            for (int k = 1; k < pm->getSize()-1; k++) {
+                if (tss_ant->tour[k] == i && tss_ant->tour[k+1] == j) {
+                    pheromoneDeposit = 1 / (mCities[tss_ant->tour[i]].distance(mCities[tss_ant->tour[i+1]]));
+                }
+            }
+
+            (*pm)(i, j) = (1-rho) * (*pm)(i, j) + rho*pheromoneDeposit;
+        }
     }
 }
 
