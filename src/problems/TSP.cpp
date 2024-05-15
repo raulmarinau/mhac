@@ -172,7 +172,7 @@ ACO_TSP::ACO_TSP(const Cities& cities): TSP(cities)
 void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
 {
     TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
-    globalLogger->debug("Starting tour: " + tss_ant->print());
+    // globalLogger->debug("Starting tour: " + tss_ant->print());
 
     tss_ant->tour[0] = 0;
 
@@ -214,14 +214,14 @@ void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatri
             s += probabilities[probIndex]; 
         }
 
-        globalLogger->debug("Next city in tour: " + std::to_string(probIndex));
+        // globalLogger->debug("Next city in tour: " + std::to_string(probIndex));
 
         availableCitiesIndexes.erase(std::find(availableCitiesIndexes.begin(), availableCitiesIndexes.end(), probIndex));
 
         tss_ant->tour[node] = probIndex;
     }
 
-    globalLogger->debug("Computed tour: " + tss_ant->print());
+    // globalLogger->debug("Computed tour: " + tss_ant->print());
 }
 
 void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr &pm, float rho)
@@ -229,16 +229,15 @@ void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::Pheromo
     TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
     for (int i = 0; i < pm->getSize(); i++) {
         for (int j = 0; j < pm->getSize(); j++) {
-            float oldPheromone = (*pm)(i, j);
             float pheromoneDeposit = 0;
 
             for (int k = 1; k < pm->getSize()-1; k++) {
                 if (tss_ant->tour[k] == i && tss_ant->tour[k+1] == j) {
-                    pheromoneDeposit = 1 / (mCities[tss_ant->tour[k]].distance(mCities[tss_ant->tour[k+1]]));
+                    pheromoneDeposit = 1 / (mCities[i].distance(mCities[j]));
                 }
             }
 
-            oldPheromone = (1-rho) * oldPheromone + rho*pheromoneDeposit;
+            (*pm)(i, j) = (1-rho) * (*pm)(i, j) + rho*pheromoneDeposit;
         }
     }
 }
