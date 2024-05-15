@@ -39,7 +39,7 @@ using PheromoneMatrixPtr = std::shared_ptr<PheromoneMatrix>;
 class Problem : virtual public common::Problem
 {
 public:
-    virtual void updateAntPath(common::SolutionPtr& ant, int node, PheromoneMatrixPtr pm, float alpha, float beta) = 0;
+    virtual void updateAntPath(common::SolutionPtr& ant, PheromoneMatrixPtr pm, float alpha, float beta) = 0;
     virtual void updatePheromoneMatrix(common::SolutionPtr ant, PheromoneMatrixPtr& pm, float rho) = 0;
 };
 using ProblemPtr = std::shared_ptr<Problem>;
@@ -49,9 +49,9 @@ class PyProblem : public Problem, public common::PyProblem
 public:
     using Problem::Problem;
 
-    void updateAntPath(common::SolutionPtr& ant, int node, PheromoneMatrixPtr pm, float alpha, float beta) override
+    void updateAntPath(common::SolutionPtr& ant, PheromoneMatrixPtr pm, float alpha, float beta) override
     {
-        PYBIND11_OVERRIDE_PURE(void, Problem, updateAntPath, ant, node, pm, alpha, beta);
+        PYBIND11_OVERRIDE_PURE(void, Problem, updateAntPath, ant, pm, alpha, beta);
     }
 
     void updatePheromoneMatrix(common::SolutionPtr ant, PheromoneMatrixPtr& pm, float rho) override

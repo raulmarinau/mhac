@@ -115,8 +115,8 @@ void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2,
     TSSPtr tss_parent1 = std::dynamic_pointer_cast<TSS>(parent1);
     TSSPtr tss_parent2 = std::dynamic_pointer_cast<TSS>(parent2);
 
-    globalLogger->debug("Parent1 (cost:", tss_parent1->cost, ")", tss_parent1->print());
-    globalLogger->debug("Parent2 (cost:", tss_parent2->cost, ")", tss_parent2->print());
+    globalLogger->debug("Parent1 (cost:" + std::to_string(tss_parent1->cost) + ")" + tss_parent1->print());
+    globalLogger->debug("Parent2 (cost:" + std::to_string(tss_parent2->cost) + ")" + tss_parent2->print());
 
     outChild1 = std::make_shared<TSS>();
     outChild2 = std::make_shared<TSS>();
@@ -144,8 +144,8 @@ void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2,
     tss_outChild1->cost = evaluateSolution(tss_outChild1);
     tss_outChild2->cost = evaluateSolution(tss_outChild2);
 
-    globalLogger->debug("Child1 (cost:", tss_outChild1->cost, ")", tss_outChild1->print());
-    globalLogger->debug("Child2 (cost:", tss_outChild2->cost, ")", tss_outChild1->print());
+    globalLogger->debug("Child1 (cost:" + std::to_string(tss_outChild1->cost) + ")" + tss_outChild1->print());
+    globalLogger->debug("Child2 (cost:" + std::to_string(tss_outChild2->cost) + ")" + tss_outChild2->print());
 }
 
 void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
@@ -160,58 +160,77 @@ void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
         std::swap(tss->tour[i], tss->tour[j]);
         tss->cost = evaluateSolution(tss);
 
-        globalLogger->debug("Mutation (cost:", tss->cost, ")", tss->print());
+        globalLogger->debug("Mutation (cost:" + std::to_string(tss->cost) + ")" + tss->print());
     }
 }
 
 ACO_TSP::ACO_TSP(const Cities& cities): TSP(cities)
 {
     mCities = cities;
-
-    for (int i = 0; i < (int) mCities.size(); i++) {
-        mAvailableCitiesIndexes.push_back(i);
-    }
 }
 
-void ACO_TSP::updateAntPath(common::SolutionPtr &ant, int node, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
+void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
 {
     TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
 
-    // starting element
-    if (node == 1) {
-        mAvailableCitiesIndexes.erase(mAvailableCitiesIndexes.begin() + tss_ant->tour[0]);
+    globalLogger->info("Starting updateAntPath with initial city: " + std::to_string(tss_ant->tour[0]));
+
+    std::vector<int> availableCitiesIndexes;
+    for (int i = 0; i < (int) mCities.size(); i++) {
+        availableCitiesIndexes.push_back(i);
     }
 
-    Probabilities prob;
-    for (int i = 0; i < tss_ant->getSize(); i++) {
-        prob.push_back(0);
+    // remove starting city in tour
+    availableCitiesIndexes.erase(availableCitiesIndexes.begin() + tss_ant->tour[0]);
+
+    for (int node = 1; node < (int) tss_ant->getSize(); node++) {
+        std::vector<float> probabilities;
+        for (int i = 0; i < tss_ant->getSize(); i++) {
+            probabilities.push_back(0);
+        }
+
+        float sum = 0;
+
+        for (const int cindex: availableCitiesIndexes) {
+            float distance = mCities[tss_ant->tour[node-1]].distance(mCities[cindex]);
+            if (distance == 0) {
+                // globalLogger->error("Distance between cities is zero, which could lead to division by zero in probability calculation.");
+                continue; // Optionally handle this case more gracefully
+            }
+            float eta = 1 / distance;
+            float t = std::pow((*pm)(tss_ant->tour[node-1], cindex), alpha)  * std::pow(eta, beta);
+            sum += t;
+            probabilities[cindex] = t;
+        }
+
+        for (const int cindex: availableCitiesIndexes) {
+            probabilities[cindex] /= sum;
+        }
+
+        // globalLogger->debug("Sum of probabilities for node " + std::to_string(node) + ": " + std::to_string(sum));
+
+        // select the node
+        int probIndex = 0;
+        // float s = probabilities[0];
+        float s = probabilities[0];
+        float u = mhac_random::random();
+
+        while (u > s && probIndex < (int) availableCitiesIndexes.size() - 1) {
+            probIndex++;
+            // s += probabilities[probIndex]; 
+            s += probabilities[availableCitiesIndexes[probIndex]];
+        }
+
+        if (probIndex < (int) availableCitiesIndexes.size()) {
+            availableCitiesIndexes.erase(availableCitiesIndexes.begin() + probIndex);
+        }
+        else {
+            // globalLogger->error("Attempting to delete invalid index " + std::to_string(probIndex));
+        }
+        tss_ant->tour[node] = availableCitiesIndexes[probIndex];
+        // globalLogger->debug("Next city in tour " + std::to_string(node)
+        //     + " is " + std::to_string(availableCitiesIndexes[probIndex]));
     }
-
-    float sum = 0;
-
-    for (const int cindex: mAvailableCitiesIndexes) {
-        float eta = 1 / mCities[tss_ant->tour[node-1]].distance(mCities[cindex]);
-        float t = std::pow((*pm)(tss_ant->tour[node-1], cindex), alpha)  * std::pow(eta, beta);
-        sum += t;
-        prob[cindex] = t;
-    }
-
-    for (const int cindex: mAvailableCitiesIndexes) {
-        prob[cindex] /= sum;
-    }
-
-    // select the node
-    int i = 0;
-    float s = prob[0];
-    float u = mhac_random::random();
-
-    while (u > s) {
-        i++;
-        s += prob[i]; 
-    }
-
-    mAvailableCitiesIndexes.erase(mAvailableCitiesIndexes.begin() + i);
-    tss_ant->tour[node] = i;
 }
 
 void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr &pm, float rho)
@@ -219,15 +238,16 @@ void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::Pheromo
     TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
     for (int i = 0; i < pm->getSize(); i++) {
         for (int j = 0; j < pm->getSize(); j++) {
+            float oldPheromone = (*pm)(i, j);
             float pheromoneDeposit = 0;
 
             for (int k = 1; k < pm->getSize()-1; k++) {
                 if (tss_ant->tour[k] == i && tss_ant->tour[k+1] == j) {
-                    pheromoneDeposit = 1 / (mCities[tss_ant->tour[i]].distance(mCities[tss_ant->tour[i+1]]));
+                    pheromoneDeposit = 1 / (mCities[tss_ant->tour[k]].distance(mCities[tss_ant->tour[k+1]]));
                 }
             }
 
-            (*pm)(i, j) = (1-rho) * (*pm)(i, j) + rho*pheromoneDeposit;
+            oldPheromone = (1-rho) * oldPheromone + rho*pheromoneDeposit;
         }
     }
 }

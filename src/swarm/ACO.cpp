@@ -18,7 +18,7 @@ AntColonyOptimization::AntColonyOptimization(ProblemPtr probType)
 {
     globalLogger->set_level(spdlog::level::trace);
     globalLogger->flush_on(spdlog::level::debug);
-    globalLogger->debug("Initializing GeneticAlgorithm");
+    globalLogger->debug("Initializing AntColonyOptimization");
 }
 
 common::SolutionPtr AntColonyOptimization::solve(int generations, int colonySize, float alpha, float beta, float rho)
@@ -39,11 +39,8 @@ common::SolutionPtr AntColonyOptimization::solve(int generations, int colonySize
         for (int k = 0; k < colonySize; k++)
         {
             common::SolutionPtr ant = mProblem->generateInitialSolution();
-            
-            for (int i = 1; i < ant->getSize(); i++)
-            {
-                mProblem->updateAntPath(ant, i, mPheromoneMatrix, alpha, beta);
-            }
+
+            mProblem->updateAntPath(ant, mPheromoneMatrix, alpha, beta);
             ant->cost = mProblem->evaluateSolution(ant);
 
             mProblem->updatePheromoneMatrix(ant, mPheromoneMatrix, rho);

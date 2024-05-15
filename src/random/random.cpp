@@ -14,7 +14,7 @@ float random(float start, float end)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(start, end);  // [start, end]
+    std::uniform_real_distribution<> distr(start, end);  // [start, end]
 
     return distr(gen);
 }

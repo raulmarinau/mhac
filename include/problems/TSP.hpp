@@ -75,15 +75,11 @@ using GA_TSPPtr = std::shared_ptr<GA_TSP>;
 class ACO_TSP : public swarm::ACO::Problem, public TSP
 {
 public:
-    using Probabilities = std::vector<float>;
-
     ACO_TSP() = delete;
     explicit ACO_TSP(const Cities&);
 
-    void updateAntPath(common::SolutionPtr& ant, int node, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta);
+    void updateAntPath(common::SolutionPtr& ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta);
     void updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr& pm, float rho);
-
-    std::vector<int> mAvailableCitiesIndexes;
 };
 using ACO_TSPPtr = std::shared_ptr<ACO_TSP>;
 
