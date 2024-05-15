@@ -29,7 +29,7 @@ std::string TSS::print()
     std::string s;
     for (int i = 0; i < (int) tour.size(); i++)
     {
-        s += tour[i];
+        s += std::to_string(tour[i]) + " ";
     }
     return s;
 }
@@ -172,29 +172,26 @@ ACO_TSP::ACO_TSP(const Cities& cities): TSP(cities)
 void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
 {
     TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
+    globalLogger->debug("Starting tour: " + tss_ant->print());
 
-    globalLogger->info("Starting updateAntPath with initial city: " + std::to_string(tss_ant->tour[0]));
+    tss_ant->tour[0] = 0;
 
     std::vector<int> availableCitiesIndexes;
-    for (int i = 0; i < (int) mCities.size(); i++) {
+    for (int i = 1; i < (int) mCities.size(); i++) {
         availableCitiesIndexes.push_back(i);
     }
 
     // remove starting city in tour
-    availableCitiesIndexes.erase(availableCitiesIndexes.begin() + tss_ant->tour[0]);
+    // availableCitiesIndexes.erase(availableCitiesIndexes.begin() + tss_ant->tour[0]);
 
     for (int node = 1; node < (int) tss_ant->getSize(); node++) {
-        std::vector<float> probabilities;
-        for (int i = 0; i < tss_ant->getSize(); i++) {
-            probabilities.push_back(0);
-        }
+        std::vector<float> probabilities(tss_ant->getSize(), 0);
 
         float sum = 0;
 
         for (const int cindex: availableCitiesIndexes) {
             float distance = mCities[tss_ant->tour[node-1]].distance(mCities[cindex]);
             if (distance == 0) {
-                // globalLogger->error("Distance between cities is zero, which could lead to division by zero in probability calculation.");
                 continue; // Optionally handle this case more gracefully
             }
             float eta = 1 / distance;
@@ -207,30 +204,24 @@ void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatri
             probabilities[cindex] /= sum;
         }
 
-        // globalLogger->debug("Sum of probabilities for node " + std::to_string(node) + ": " + std::to_string(sum));
-
         // select the node
         int probIndex = 0;
-        // float s = probabilities[0];
         float s = probabilities[0];
         float u = mhac_random::random();
 
-        while (u > s && probIndex < (int) availableCitiesIndexes.size() - 1) {
+        while (u > s) {
             probIndex++;
-            // s += probabilities[probIndex]; 
-            s += probabilities[availableCitiesIndexes[probIndex]];
+            s += probabilities[probIndex]; 
         }
 
-        if (probIndex < (int) availableCitiesIndexes.size()) {
-            availableCitiesIndexes.erase(availableCitiesIndexes.begin() + probIndex);
-        }
-        else {
-            // globalLogger->error("Attempting to delete invalid index " + std::to_string(probIndex));
-        }
-        tss_ant->tour[node] = availableCitiesIndexes[probIndex];
-        // globalLogger->debug("Next city in tour " + std::to_string(node)
-        //     + " is " + std::to_string(availableCitiesIndexes[probIndex]));
+        globalLogger->debug("Next city in tour: " + std::to_string(probIndex));
+
+        availableCitiesIndexes.erase(std::find(availableCitiesIndexes.begin(), availableCitiesIndexes.end(), probIndex));
+
+        tss_ant->tour[node] = probIndex;
     }
+
+    globalLogger->debug("Computed tour: " + tss_ant->print());
 }
 
 void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr &pm, float rho)
