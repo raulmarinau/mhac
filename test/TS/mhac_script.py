@@ -38,4 +38,4 @@ def displayTour(cities, solution):
 problem = mhac.problems.tsp.TSP(read_TSP_data())
 TS = mhac.math.TabuSearch(problem)
 sol = TS.solve(1000, 10, 20)
-displayTour(problem.mCities, sol.tour)
+displayTour(problem.cities, sol.tour)

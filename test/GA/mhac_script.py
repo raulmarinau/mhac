@@ -36,5 +36,5 @@ problem = mhac.problems.tsp.GA_TSP(read_TSP_data())
 GA = mhac.evolutionary.GeneticAlgorithm(problem)
 GA.setTournamentSize(5)
 sol = GA.solve(100, 10, 0.1, mhac.evolutionary.SelectionType.TOURNAMENT)
-displayTour(problem.mCities, sol.tour)
+displayTour(problem.cities, sol.tour)
 sol.cost

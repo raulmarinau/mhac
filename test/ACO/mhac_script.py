@@ -35,5 +35,5 @@ def displayTour(cities, solution):
 problem = mhac.problems.tsp.ACO_TSP(read_TSP_data())
 ACO = mhac.swarm.AntColonyOptimization(problem)
 sol = ACO.solve(150, 20, 0.5, 0.5, 0.25)
-displayTour(problem.mCities, sol.tour)
+displayTour(problem.cities, sol.tour)
 sol.cost

@@ -70,4 +70,4 @@ class PythonTSP(mhac.physics.Problem):
 problem = PythonTSP(read_TSP_data())
 SA = mhac.physics.SimulatedAnnealing(problem)
 sol = SA.solve(1000., 0.000001)
-displayTour(problem.mCities, sol.tour)
+displayTour(problem.cities, sol.tour)

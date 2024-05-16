@@ -36,26 +36,26 @@ std::string TSS::print()
 
 TSP::TSP(const Cities& cities)
 {
-    mCities = cities;
+    this->cities = cities;
 }
 
 float TSP::evaluateSolution(common::SolutionPtr sol)
 {
     TSSPtr tss = std::dynamic_pointer_cast<TSS>(sol);
     float ev = 0;
-    int lastCityIndex = mCities.size() - 1;
+    int lastCityIndex = cities.size() - 1;
     for (int i = 0; i < lastCityIndex; i++)
     {
-        ev += mCities[tss->tour[i]].distance(mCities[tss->tour[i+1]]);
+        ev += cities[tss->tour[i]].distance(cities[tss->tour[i+1]]);
     }
-    ev += mCities[tss->tour[lastCityIndex]].distance(mCities[tss->tour[0]]);
+    ev += cities[tss->tour[lastCityIndex]].distance(cities[tss->tour[0]]);
     return ev;
 }
 
 common::SolutionPtr TSP::generateInitialSolution()
 {
     TSSPtr tss = std::make_shared<TSS>();
-    tss->tour = mhac_random::sample(mCities.size(), mCities.size());
+    tss->tour = mhac_random::sample(cities.size(), cities.size());
     return tss;
 }
 
@@ -65,7 +65,7 @@ common::SolutionPtr TSP::generateNewSolution(common::SolutionPtr initialSol)
     TSSPtr tssNew = std::make_shared<TSS>();
     tssNew->tour = tssInitial->tour;
 
-    std::vector<int> indexes = mhac_random::sample(mCities.size(), 2);
+    std::vector<int> indexes = mhac_random::sample(cities.size(), 2);
     int i = indexes[0];
     int j = indexes[1];
 
@@ -80,7 +80,7 @@ common::SolutionPtr TSP::generateNewSolution(common::SolutionPtr initialSol)
 
 GA_TSP::GA_TSP(const Cities& cities): TSP(cities)
 {
-    mCities = cities;
+    this->cities = cities;
 }
 
 void GA_TSP::repair(common::SolutionPtr& sol)
@@ -101,7 +101,7 @@ void GA_TSP::repair(common::SolutionPtr& sol)
     }
 
     // place them in the positions of duplicates
-    for (int city = 0; city < (int) mCities.size(); city++)
+    for (int city = 0; city < (int) cities.size(); city++)
     {
         if (!seen.count(city)) {
             tss->tour[missing.back()] = city;
@@ -151,7 +151,7 @@ void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2,
 void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
 {
     TSSPtr tss = std::dynamic_pointer_cast<TSS>(outChild);
-    std::vector<int> indexes = mhac_random::sample(mCities.size(), 2);
+    std::vector<int> indexes = mhac_random::sample(cities.size(), 2);
     int i = indexes[0];
     int j = indexes[1];
 
@@ -166,7 +166,7 @@ void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
 
 ACO_TSP::ACO_TSP(const Cities& cities): TSP(cities)
 {
-    mCities = cities;
+    this->cities = cities;
 }
 
 void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
@@ -177,7 +177,7 @@ void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatri
     tss_ant->tour[0] = 0;
 
     std::vector<int> availableCitiesIndexes;
-    for (int i = 1; i < (int) mCities.size(); i++) {
+    for (int i = 1; i < (int) cities.size(); i++) {
         availableCitiesIndexes.push_back(i);
     }
 
@@ -190,7 +190,7 @@ void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatri
         float sum = 0;
 
         for (const int cindex: availableCitiesIndexes) {
-            float distance = mCities[tss_ant->tour[node-1]].distance(mCities[cindex]);
+            float distance = cities[tss_ant->tour[node-1]].distance(cities[cindex]);
             if (distance == 0) {
                 continue; // Optionally handle this case more gracefully
             }
@@ -233,7 +233,7 @@ void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::Pheromo
 
             for (int k = 1; k < pm->getSize()-1; k++) {
                 if (tss_ant->tour[k] == i && tss_ant->tour[k+1] == j) {
-                    pheromoneDeposit = 1 / (mCities[i].distance(mCities[j]));
+                    pheromoneDeposit = 1 / (cities[i].distance(cities[j]));
                 }
             }
 

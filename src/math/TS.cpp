@@ -78,6 +78,7 @@ common::SolutionPtr TabuSearch::solve(int iterations, int maxmTabuListSize, int 
         {
             bestS = S;
             bestS->cost = S->cost;
+            globalLogger->debug("Found better solution with cost: " + std::to_string(bestS->cost));
         }
     }
 

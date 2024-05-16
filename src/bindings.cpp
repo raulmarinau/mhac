@@ -3,19 +3,21 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 #include <pybind11/stl.h>
+#include <pybind11/cast.h>
 
 #include "common.hpp"
 #include "evolutionary/GA.hpp"
 #include "math/TS.hpp"
 #include "physics/SA.hpp"
-#include "problems/TSP.hpp"
-#include "pybind11/cast.h"
 #include "swarm/ACO.hpp"
+#include "problems/TSP.hpp"
+#include "problems/JSS.hpp"
 
 namespace py = pybind11;
 
-PYBIND11_MAKE_OPAQUE(problems::tsp::Cities);
 PYBIND11_MAKE_OPAQUE(std::vector<int>);  // without this and the binding, int vector TSP::tour is immutable
+PYBIND11_MAKE_OPAQUE(problems::tsp::Cities);
+PYBIND11_MAKE_OPAQUE(problems::jss::TimeMatrix);
 
 PYBIND11_MODULE(mhac, m)
 {
@@ -94,19 +96,34 @@ PYBIND11_MODULE(mhac, m)
         .def("distance", &problems::tsp::City::distance);
     py::bind_vector<problems::tsp::Cities>(m_problems_tsp, "Cities");
 
+    py::class_<problems::tsp::TSS, common::Solution, problems::tsp::TSSPtr>(m_problems_tsp, "TSS")
+        .def(py::init<>())
+        .def_readwrite("tour", &problems::tsp::TSS::tour)
+        .def("print", &problems::tsp::TSS::print);
+
     py::class_<problems::tsp::TSP, common::Problem, problems::tsp::TSPPtr>(m_problems_tsp, "TSP")
         .def(py::init<const problems::tsp::Cities&>(), py::arg("cities"))
-        .def_readwrite("mCities", &problems::tsp::TSP::mCities);
+        .def_readwrite("cities", &problems::tsp::TSP::cities);
 
     py::class_<problems::tsp::GA_TSP, evolutionary::GA::Problem, problems::tsp::GA_TSPPtr>(m_problems_tsp, "GA_TSP")
         .def(py::init<const problems::tsp::Cities&>(), py::arg("cities"))
-        .def_readwrite("mCities", &problems::tsp::TSP::mCities);
+        .def_readwrite("cities", &problems::tsp::TSP::cities);
 
     py::class_<problems::tsp::ACO_TSP, swarm::ACO::Problem, problems::tsp::ACO_TSPPtr>(m_problems_tsp, "ACO_TSP")
         .def(py::init<const problems::tsp::Cities&>(), py::arg("cities"))
-        .def_readwrite("mCities", &problems::tsp::TSP::mCities);
+        .def_readwrite("cities", &problems::tsp::TSP::cities);
 
-    py::class_<problems::tsp::TSS, common::Solution, problems::tsp::TSSPtr>(m_problems_tsp, "TSS")
+    // import mhac.problems.jss
+    py::module m_problems_jss = m_problems.def_submodule("jss");
+
+    py::bind_vector<problems::jss::TimeMatrix>(m_problems_jss, "TimeMatrix");
+
+    py::class_<problems::jss::JSSS, common::Solution, problems::jss::JSSSPtr>(m_problems_jss, "JSSS")
         .def(py::init<>())
-        .def_readwrite("tour", &problems::tsp::TSS::tour);
+        .def_readwrite("schedule", &problems::jss::JSSS::schedule)
+        .def("print", &problems::jss::JSSS::print);
+
+    py::class_<problems::jss::JSSP, common::Problem, problems::jss::JSSPPtr>(m_problems_jss, "JSSP")
+        .def(py::init<const problems::jss::TimeMatrix&>())
+        .def_readwrite("products", &problems::jss::JSSP::products);
 }

@@ -33,7 +33,7 @@ using Cities = std::vector<City>;
 class TSS: public common::Solution
 {
 public:
-    bool isEqual(const Solution&) const override;
+    bool isEqual(const common::Solution&) const override;
     int getSize() const override;
     std::vector<int> tour;
     std::string print();
@@ -52,7 +52,7 @@ public:
     common::SolutionPtr generateNewSolution(common::SolutionPtr) override;
     float evaluateSolution(common::SolutionPtr) override;
     
-    Cities mCities;
+    Cities cities;
 };
 using TSPPtr = std::shared_ptr<TSP>;
 
