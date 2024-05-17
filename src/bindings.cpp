@@ -6,10 +6,13 @@
 #include <pybind11/cast.h>
 
 #include "common.hpp"
-#include "evolutionary/GA.hpp"
-#include "math/TS.hpp"
+#include "logger/logger.hpp"
+
 #include "physics/SA.hpp"
+#include "math/TS.hpp"
+#include "evolutionary/GA.hpp"
 #include "swarm/ACO.hpp"
+
 #include "problems/TSP.hpp"
 #include "problems/JSS.hpp"
 
@@ -21,11 +24,23 @@ PYBIND11_MAKE_OPAQUE(problems::jss::TimeMatrix);
 
 PYBIND11_MODULE(mhac, m)
 {
+    // import mhac
     using VectorInt = std::vector<int>;
     py::bind_vector<VectorInt>(m, "VectorInt");
     py::implicitly_convertible<py::iterable, VectorInt>();
 
-    // import mhac
+    m.def("set_log_level", &setLogLevel, "Setup the log level");
+    
+    py::enum_<spdlog::level::level_enum>(m, "LogLevel")
+        .value("trace", spdlog::level::trace)
+        .value("debug", spdlog::level::debug)
+        .value("info", spdlog::level::info)
+        .value("warn", spdlog::level::warn)
+        .value("err", spdlog::level::err)
+        .value("critical", spdlog::level::critical)
+        .value("off", spdlog::level::off)
+        .export_values();
+
     // import mhac.common
     py::module m_common = m.def_submodule("common");
 

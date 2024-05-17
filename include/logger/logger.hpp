@@ -8,6 +8,7 @@
 #include <spdlog/logger.h>
 
 using GlobalLoggerPtr = std::shared_ptr<spdlog::logger>;
+void setLogLevel(spdlog::level::level_enum);
  
 extern GlobalLoggerPtr globalLogger;
 

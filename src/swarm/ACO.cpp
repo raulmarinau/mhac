@@ -16,8 +16,7 @@ PheromoneMatrix::PheromoneMatrix(int size, float initialValue)
 AntColonyOptimization::AntColonyOptimization(ProblemPtr probType)
     :mProblem(probType), mPheromoneMatrix(nullptr)
 {
-    globalLogger->set_level(spdlog::level::trace);
-    globalLogger->flush_on(spdlog::level::debug);
+    globalLogger->flush_on(spdlog::level::err);
     globalLogger->debug("Initializing AntColonyOptimization");
 }
 

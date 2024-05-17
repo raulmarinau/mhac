@@ -22,8 +22,7 @@ namespace TS
 TabuSearch::TabuSearch(common::ProblemPtr probType)
     :mProblem(probType)
 {
-    globalLogger->set_level(spdlog::level::trace);
-    globalLogger->flush_on(spdlog::level::debug);
+    globalLogger->flush_on(spdlog::level::err);
     globalLogger->debug("Initializing TabuSearch");
 }
 

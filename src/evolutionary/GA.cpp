@@ -16,8 +16,7 @@ namespace GA
 GeneticAlgorithm::GeneticAlgorithm(ProblemPtr probType)
     :mProblem(probType), mTournamentSize(0)
 {
-    globalLogger->set_level(spdlog::level::trace);
-    globalLogger->flush_on(spdlog::level::debug);
+    globalLogger->flush_on(spdlog::level::err);
     globalLogger->debug("Initializing GeneticAlgorithm");
 }
 
