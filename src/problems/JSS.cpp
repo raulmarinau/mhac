@@ -101,12 +101,6 @@ common::SolutionPtr JSSP::generateNewSolution(common::SolutionPtr initialSol)
     std::vector<int> indexes = mhac_random::sample(jssInitial->getSize(), 2);
     int i = indexes[0];
     int j = indexes[1];
-
-    if (i > j)
-        std::swap(i, j);
-
-    // for (int k = 0; k < (j-i+1) / 2; k++)
-    //     std::swap(jssNew->schedule[i+k], jssNew->schedule[j-k]);
     
     std::swap(jssNew->schedule[i], jssNew->schedule[j]);
 
