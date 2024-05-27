@@ -71,7 +71,7 @@ public:
 using GA_TSPPtr = std::shared_ptr<GA_TSP>;
 
 
-// Ant Coloty Optimization TSP
+// Ant Colony Optimization TSP
 class ACO_TSP : public swarm::ACO::Problem, public TSP
 {
 public:

@@ -141,4 +141,12 @@ PYBIND11_MODULE(mhac, m)
     py::class_<problems::jss::JSSP, common::Problem, problems::jss::JSSPPtr>(m_problems_jss, "JSSP")
         .def(py::init<const problems::jss::TimeMatrix&>())
         .def_readwrite("products", &problems::jss::JSSP::products);
+
+    py::class_<problems::jss::GA_JSSP, evolutionary::GA::Problem, problems::jss::GA_JSSPPtr>(m_problems_jss, "GA_JSSP")
+        .def(py::init<const problems::jss::TimeMatrix&>())
+        .def_readwrite("products", &problems::jss::JSSP::products);
+
+    py::class_<problems::jss::ACO_JSSP, swarm::ACO::Problem, problems::jss::ACO_JSSPPtr>(m_problems_jss, "ACO_JSSP")
+        .def(py::init<const problems::jss::TimeMatrix&>())
+        .def_readwrite("products", &problems::jss::JSSP::products);
 }

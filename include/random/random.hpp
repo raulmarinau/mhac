@@ -1,6 +1,7 @@
 #ifndef MHAC_RANDOM_HPP
 #define MHAC_RANDOM_HPP
 
+#include <random>
 #include <vector>
 
 namespace mhac_random

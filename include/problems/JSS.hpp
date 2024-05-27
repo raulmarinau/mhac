@@ -43,6 +43,31 @@ public:
 };
 using JSSPPtr = std::shared_ptr<JSSP>;
 
+// Genetic Algorithm JSSP
+class GA_JSSP : public evolutionary::GA::Problem, public JSSP
+{
+public:
+    GA_JSSP() = delete;
+    explicit GA_JSSP(const TimeMatrix&);
+
+    void crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2) override;
+    void mutation(common::SolutionPtr& outChild, float mutationChance) override;
+    void repair(common::SolutionPtr&) override;
+};
+using GA_JSSPPtr = std::shared_ptr<GA_JSSP>;
+
+// Ant Colony Optimization JSSP
+class ACO_JSSP : public swarm::ACO::Problem, public JSSP
+{
+public:
+    ACO_JSSP() = delete;
+    explicit ACO_JSSP(const TimeMatrix&);
+
+    void updateAntPath(common::SolutionPtr& ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta) override;
+    void updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr& pm, float rho) override;
+};
+using ACO_JSSPPtr = std::shared_ptr<ACO_JSSP>;
+
 } // namespace jss
 } // namespace problems
 

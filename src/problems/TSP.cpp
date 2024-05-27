@@ -79,9 +79,7 @@ common::SolutionPtr TSP::generateNewSolution(common::SolutionPtr initialSol)
 }
 
 GA_TSP::GA_TSP(const Cities& cities): TSP(cities)
-{
-    this->cities = cities;
-}
+{}
 
 void GA_TSP::repair(common::SolutionPtr& sol)
 {
@@ -165,9 +163,7 @@ void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
 }
 
 ACO_TSP::ACO_TSP(const Cities& cities): TSP(cities)
-{
-    this->cities = cities;
-}
+{}
 
 void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
 {
