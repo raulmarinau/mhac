@@ -83,8 +83,7 @@ PYBIND11_MODULE(mhac, m)
 
     py::class_<evolutionary::GA::GeneticAlgorithm>(m_evolutionary, "GeneticAlgorithm")
         .def(py::init<evolutionary::GA::ProblemPtr>(), py::arg("problem"))
-        .def("solve", &evolutionary::GA::GeneticAlgorithm::solve, py::arg("generations"), py::arg("populationSize"), py::arg("mutationChance"), py::arg("selectionType"))
-        .def("setTournamentSize", &evolutionary::GA::GeneticAlgorithm::setTournamentSize, py::arg("tournamentSize"));
+        .def("solve", &evolutionary::GA::GeneticAlgorithm::solve, py::arg("generations"), py::arg("populationSize"), py::arg("mutationChance"), py::arg("selectionSize"), py::arg("selectionType"));
 
     // import mhac.swarm
     py::module m_swarm = m.def_submodule("swarm");

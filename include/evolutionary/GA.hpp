@@ -40,7 +40,7 @@ public:
 };
 using PyProblemPtr = std::shared_ptr<PyProblem>;
 
-// TODO: should move selection to the problem
+
 enum class SelectionType
 {
     TOURNAMENT,
@@ -59,15 +59,15 @@ public:
     GeneticAlgorithm& operator=(GeneticAlgorithm&&) = delete;
     virtual ~GeneticAlgorithm() = default;
     
-    common::SolutionPtr solve(int generations, int populationSize, float mutationChance, SelectionType selectionType);
-    void setTournamentSize(int size);
+    common::SolutionPtr solve(int generations, int populationSize, float mutationChance, int selectionSize, SelectionType selectionType);
 
 private:
     common::SolutionPtr tournamentSelection();
+    common::SolutionPtr proportionalSelection();
 
     common::SolutionVec mPopulation;
     ProblemPtr mProblem;
-    int mTournamentSize;
+    int mSelectionSize;
 };
 
 } // namespace GA

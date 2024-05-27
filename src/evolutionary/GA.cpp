@@ -14,7 +14,7 @@ namespace GA
 {
 
 GeneticAlgorithm::GeneticAlgorithm(ProblemPtr probType)
-    :mProblem(probType), mTournamentSize(0)
+    :mProblem(probType), mSelectionSize(0)
 {
     globalLogger->flush_on(spdlog::level::err);
     globalLogger->debug("Initializing GeneticAlgorithm");
@@ -22,7 +22,7 @@ GeneticAlgorithm::GeneticAlgorithm(ProblemPtr probType)
 
 common::SolutionPtr GeneticAlgorithm::tournamentSelection()
 {
-    std::vector<int> indexes = mhac_random::sample(mPopulation.size(), mTournamentSize);
+    std::vector<int> indexes = mhac_random::sample(mPopulation.size(), mSelectionSize);
 
     int minElement = std::numeric_limits<int>::max();
     int indexOfMin = -1;
@@ -38,13 +38,15 @@ common::SolutionPtr GeneticAlgorithm::tournamentSelection()
     return mPopulation[indexOfMin];
 }
 
-void GeneticAlgorithm::setTournamentSize(int size)
+common::SolutionPtr GeneticAlgorithm::proportionalSelection()
 {
-    mTournamentSize = size;
+    return nullptr;
 }
 
-common::SolutionPtr GeneticAlgorithm::solve(int generations, int populationSize, float mutationChance, SelectionType selectionType)
+common::SolutionPtr GeneticAlgorithm::solve(int generations, int populationSize, float mutationChance, int selectionSize, SelectionType selectionType)
 {
+    mSelectionSize = selectionSize;
+
     // initialization
     for (int i = 0; i < populationSize; i++)
     {
