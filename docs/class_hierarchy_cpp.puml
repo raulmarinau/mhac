@@ -1,0 +1,58 @@
+@startuml ClassHierarchyCpp
+left to right direction
+set separator ::
+
+class common::Solution {
+}
+
+class common::Problem {
+}
+
+class physics::SA::SimulatedAnnealing {
++ SimulatedAnnealing(common::Problem)
++ common::Solution solve(...)
+}
+physics::SA::SimulatedAnnealing *-- common::Problem
+
+
+class evolutionary::GA::GeneticAlgorithm {
++ GeneticAlgorithm(evolutionary::GA::Problem)
++ common::Solution solve(...)
+}
+evolutionary::GA::GeneticAlgorithm *-- evolutionary::GA::Problem
+
+class evolutionary::GA::Problem {
+}
+evolutionary::GA::Problem <|-[#blue,dashed]- common::Problem
+
+
+class swarm::ACO::Problem {
+}
+swarm::ACO::Problem <|-[#blue,dashed]- common::Problem
+
+class swarm::ACO::AntColonyOptimization {
++ AntColonyOptimization(swarm::ACO::Problem)
++ common::Solution solve(...)
+}
+swarm::ACO::AntColonyOptimization *-- swarm::ACO::Problem
+
+
+class problems::JSS::JSSS {
+}
+problems::JSS::JSSS <|-- common::Solution
+
+class problems::JSS::JSSP {
+}
+problems::JSS::JSSP <|-[#blue,dashed]- common::Problem
+
+class problems::JSS::GA_JSSP {
+}
+problems::JSS::GA_JSSP <|-[#blue,dashed]- evolutionary::GA::Problem
+problems::JSS::GA_JSSP <|-- problems::JSS::JSSP
+
+class problems::JSS::ACO_JSSP {
+}
+problems::JSS::ACO_JSSP <|-[#blue,dashed]- swarm::ACO::Problem
+problems::JSS::ACO_JSSP <|-- problems::JSS::JSSP
+
+@enduml

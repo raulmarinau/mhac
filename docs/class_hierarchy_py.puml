@@ -1,0 +1,54 @@
+@startuml ClassHierarchyPy
+left to right direction
+set separator ::
+
+class common::Solution {
+}
+
+class common::Problem {
+}
+
+class physics::SA::SimulatedAnnealing {
++ SimulatedAnnealing(common::Problem)
++ common::Solution solve(...)
+}
+physics::SA::SimulatedAnnealing *-- common::Problem
+
+
+class evolutionary::GA::GeneticAlgorithm {
++ GeneticAlgorithm(evolutionary::GA::Problem)
++ common::Solution solve(...)
+}
+evolutionary::GA::GeneticAlgorithm *--evolutionary::GA::Problem
+
+class evolutionary::GA::Problem {
+}
+evolutionary::GA::Problem <|-[#blue,dashed]- common::Problem
+
+
+class swarm::ACO::Problem {
+}
+swarm::ACO::Problem <|-[#blue,dashed]- common::Problem
+
+class swarm::ACO::AntColonyOptimization {
++ AntColonyOptimization(swarm::ACO::Problem)
++ common::Solution solve(...)
+}
+swarm::ACO::AntColonyOptimization *-- swarm::ACO::Problem
+
+
+class python::JSSP {
+}
+python::JSSP <|-[#blue,dashed]- common::Problem
+
+class python::GA_JSSP {
+}
+python::GA_JSSP <|-[#blue,dashed]- evolutionary::GA::Problem
+python::GA_JSSP <|-- python::JSSP
+
+class python::ACO_JSSP {
+}
+python::ACO_JSSP <|-[#blue,dashed]- swarm::ACO::Problem
+python::ACO_JSSP <|--python::JSSP
+
+@enduml
