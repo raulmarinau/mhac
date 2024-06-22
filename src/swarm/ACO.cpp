@@ -39,7 +39,7 @@ common::SolutionPtr AntColonyOptimization::solve(int generations, int colonySize
         {
             common::SolutionPtr ant = mProblem->generateInitialSolution();
 
-            mProblem->updateAntPath(ant, mPheromoneMatrix, alpha, beta);
+            ant = mProblem->updateAntPath(ant, mPheromoneMatrix, alpha, beta);
             ant->cost = mProblem->evaluateSolution(ant);
 
             mProblem->updatePheromoneMatrix(ant, mPheromoneMatrix, rho);
@@ -54,7 +54,6 @@ common::SolutionPtr AntColonyOptimization::solve(int generations, int colonySize
 
     return bestS;
 }
-
 
 } // namespace ACO
 } // namespace swarm

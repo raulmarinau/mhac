@@ -81,7 +81,7 @@ common::SolutionPtr TSP::generateNewSolution(common::SolutionPtr initialSol)
 GA_TSP::GA_TSP(const Cities& cities): TSP(cities)
 {}
 
-void GA_TSP::repair(common::SolutionPtr& sol)
+void GA_TSP::repair(common::SolutionPtr sol)
 {
     TSSPtr tss = std::dynamic_pointer_cast<TSS>(sol);
     std::unordered_set<int> seen;
@@ -108,7 +108,7 @@ void GA_TSP::repair(common::SolutionPtr& sol)
     }
 }
 
-void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2)
+common::SolutionVec GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2)
 {
     TSSPtr tss_parent1 = std::dynamic_pointer_cast<TSS>(parent1);
     TSSPtr tss_parent2 = std::dynamic_pointer_cast<TSS>(parent2);
@@ -116,8 +116,8 @@ void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2,
     globalLogger->debug("Parent1 (cost:" + std::to_string(tss_parent1->cost) + ")" + tss_parent1->print());
     globalLogger->debug("Parent2 (cost:" + std::to_string(tss_parent2->cost) + ")" + tss_parent2->print());
 
-    outChild1 = std::make_shared<TSS>();
-    outChild2 = std::make_shared<TSS>();
+    TSSPtr outChild1 = std::make_shared<TSS>();
+    TSSPtr outChild2 = std::make_shared<TSS>();
 
     TSSPtr tss_outChild1 = std::dynamic_pointer_cast<TSS>(outChild1);
     TSSPtr tss_outChild2 = std::dynamic_pointer_cast<TSS>(outChild2);
@@ -144,9 +144,12 @@ void GA_TSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2,
 
     globalLogger->debug("Child1 (cost:" + std::to_string(tss_outChild1->cost) + ")" + tss_outChild1->print());
     globalLogger->debug("Child2 (cost:" + std::to_string(tss_outChild2->cost) + ")" + tss_outChild2->print());
+
+    common::SolutionVec res {tss_outChild1, tss_outChild2};
+    return res;
 }
 
-void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
+common::SolutionPtr GA_TSP::mutation(common::SolutionPtr outChild, float mutationChance)
 {
     TSSPtr tss = std::dynamic_pointer_cast<TSS>(outChild);
     std::vector<int> indexes = mhac_random::sample(cities.size(), 2);
@@ -160,12 +163,14 @@ void GA_TSP::mutation(common::SolutionPtr& outChild, float mutationChance)
 
         globalLogger->debug("Mutation (cost:" + std::to_string(tss->cost) + ")" + tss->print());
     }
+
+    return tss;
 }
 
 ACO_TSP::ACO_TSP(const Cities& cities): TSP(cities)
 {}
 
-void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
+common::SolutionPtr ACO_TSP::updateAntPath(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
 {
     TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
     // globalLogger->debug("Starting tour: " + tss_ant->print());
@@ -218,9 +223,10 @@ void ACO_TSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatri
     }
 
     // globalLogger->debug("Computed tour: " + tss_ant->print());
+    return tss_ant;
 }
 
-void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr &pm, float rho)
+void ACO_TSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr pm, float rho)
 {
     TSSPtr tss_ant = std::dynamic_pointer_cast<TSS>(ant);
     for (int i = 0; i < pm->getSize(); i++) {

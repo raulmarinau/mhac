@@ -64,9 +64,9 @@ public:
     GA_TSP() = delete;
     explicit GA_TSP(const Cities&);
 
-    void crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2) override;
-    void mutation(common::SolutionPtr& outChild, float mutationChance) override;
-    void repair(common::SolutionPtr&) override;
+    common::SolutionVec crossover(common::SolutionPtr parent1, common::SolutionPtr parent2) override;
+    common::SolutionPtr mutation(common::SolutionPtr outChild, float mutationChance) override;
+    void repair(common::SolutionPtr) ;
 };
 using GA_TSPPtr = std::shared_ptr<GA_TSP>;
 
@@ -78,8 +78,8 @@ public:
     ACO_TSP() = delete;
     explicit ACO_TSP(const Cities&);
 
-    void updateAntPath(common::SolutionPtr& ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta) override;
-    void updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr& pm, float rho) override;
+    common::SolutionPtr updateAntPath(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta) override;
+    void updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr pm, float rho) override;
 };
 using ACO_TSPPtr = std::shared_ptr<ACO_TSP>;
 

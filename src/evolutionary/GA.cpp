@@ -79,11 +79,13 @@ common::SolutionPtr GeneticAlgorithm::solve(int generations, int populationSize,
 
             // crossover
             common::SolutionPtr child1, child2;
-            mProblem->crossover(parent1, parent2, child1, child2);
+            common::SolutionVec res = mProblem->crossover(parent1, parent2);
+            child1 = res[0];
+            child2 = res[1];
 
             // mutation
-            mProblem->mutation(child1, mutationChance);
-            mProblem->mutation(child2, mutationChance);
+            child1 = mProblem->mutation(child1, mutationChance);
+            child2 = mProblem->mutation(child2, mutationChance);
 
             // create new generation
             children.push_back(child1);

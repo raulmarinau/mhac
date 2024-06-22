@@ -1,3 +1,5 @@
+#define PYBIND11_DETAILED_ERROR_MESSAGES
+
 #include <memory>
 
 #include <pybind11/pybind11.h>
@@ -19,6 +21,7 @@
 namespace py = pybind11;
 
 PYBIND11_MAKE_OPAQUE(std::vector<int>);  // without this and the binding, int vector TSP::tour is immutable
+// PYBIND11_MAKE_OPAQUE(common::SolutionVec);
 PYBIND11_MAKE_OPAQUE(problems::tsp::Cities);
 PYBIND11_MAKE_OPAQUE(problems::jss::TimeMatrix);
 
@@ -53,6 +56,8 @@ PYBIND11_MODULE(mhac, m)
     py::class_<common::Solution, common::PySolution, common::SolutionPtr>(m_common, "Solution")
         .def(py::init<>())
         .def_readwrite("cost", &common::Solution::cost);
+    py::bind_vector<common::SolutionVec>(m_common, "SolutionVec");
+    py::implicitly_convertible<py::iterable, common::SolutionVec>();
     
     // import mhac.physics
     py::module m_physics = m.def_submodule("physics");
@@ -74,8 +79,7 @@ PYBIND11_MODULE(mhac, m)
     py::class_<evolutionary::GA::Problem, evolutionary::GA::PyProblem, evolutionary::GA::ProblemPtr>(m_evolutionary, "Problem")
         .def(py::init<>())
         .def("crossover", &evolutionary::GA::Problem::crossover)
-        .def("mutation", &evolutionary::GA::Problem::mutation)
-        .def("repair", &evolutionary::GA::Problem::repair);
+        .def("mutation", &evolutionary::GA::Problem::mutation);
 
     py::enum_<evolutionary::GA::SelectionType>(m_evolutionary, "SelectionType")
         .value("TOURNAMENT", evolutionary::GA::SelectionType::TOURNAMENT)
@@ -87,6 +91,19 @@ PYBIND11_MODULE(mhac, m)
 
     // import mhac.swarm
     py::module m_swarm = m.def_submodule("swarm");
+
+    py::class_<swarm::ACO::PheromoneMatrix, swarm::ACO::PheromoneMatrixPtr>(m, "PheromoneMatrix")
+        .def(py::init<int, float>(), py::arg("size"), py::arg("initialValue"))
+        .def("__call__", [](swarm::ACO::PheromoneMatrix &m, int i, int j) -> float & {
+            return m(i, j);  // Direct call to non-const operator()
+        }, py::return_value_policy::reference_internal)
+        .def("__call__", [](const swarm::ACO::PheromoneMatrix &m, int i, int j) -> const float & {
+            return m(i, j);  // Direct call to const operator()
+        }, py::return_value_policy::reference_internal) 
+        .def("getSize", &swarm::ACO::PheromoneMatrix::getSize)
+        .def("set", [](swarm::ACO::PheromoneMatrix &m, int i, int j, float value) {
+            m(i, j) = value;
+        });
 
     py::class_<swarm::ACO::Problem, swarm::ACO::PyProblem, swarm::ACO::ProblemPtr>(m_swarm, "Problem")
         .def(py::init<>())

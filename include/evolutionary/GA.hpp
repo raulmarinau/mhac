@@ -12,9 +12,8 @@ namespace GA
 class Problem : virtual public common::Problem
 {
 public:
-    virtual void crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2) = 0;
-    virtual void mutation(common::SolutionPtr& outChild, float mutationChance) = 0;
-    virtual void repair(common::SolutionPtr&) = 0;
+    virtual common::SolutionVec crossover(common::SolutionPtr parent1, common::SolutionPtr parent2) = 0;
+    virtual common::SolutionPtr mutation(common::SolutionPtr outChild, float mutationChance) = 0;
 };
 using ProblemPtr = std::shared_ptr<Problem>;
 
@@ -23,19 +22,14 @@ class PyProblem : public Problem, public common::PyProblem
 public:
     using Problem::Problem;
 
-    void crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2) override
+    common::SolutionVec crossover(common::SolutionPtr parent1, common::SolutionPtr parent2) override
     {
-        PYBIND11_OVERRIDE_PURE(void, Problem, crossover, parent1, parent2, outChild1, outChild2);
+        PYBIND11_OVERRIDE_PURE(common::SolutionVec, Problem, crossover, parent1, parent2);
     }
 
-    void mutation(common::SolutionPtr& outChild, float mutationChance) override
+    common::SolutionPtr mutation(common::SolutionPtr outChild, float mutationChance) override
     {
-        PYBIND11_OVERRIDE_PURE(void, Problem, mutation, outChild, mutationChance);
-    }
-
-    void repair(common::SolutionPtr& sol) override
-    {
-        PYBIND11_OVERRIDE_PURE(void, Problem, repair, sol);
+        PYBIND11_OVERRIDE_PURE(common::SolutionPtr, Problem, mutation, outChild, mutationChance);
     }
 };
 using PyProblemPtr = std::shared_ptr<PyProblem>;

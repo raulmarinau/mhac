@@ -66,4 +66,6 @@ using PyProblemPtr = std::shared_ptr<PyProblem>;
 
 } // namespace common
 
+PYBIND11_MAKE_OPAQUE(common::SolutionVec);
+
 #endif // MHAC_COMMON_HPP

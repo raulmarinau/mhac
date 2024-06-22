@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 
+#include "common.hpp"
 #include "logger/logger.hpp"
 #include "random/random.hpp"
 
@@ -113,7 +114,7 @@ common::SolutionPtr JSSP::generateNewSolution(common::SolutionPtr initialSol)
 GA_JSSP::GA_JSSP(const TimeMatrix& products) : JSSP(products)
 {}
 
-void GA_JSSP::repair(common::SolutionPtr& sol)
+void GA_JSSP::repair(common::SolutionPtr sol)
 {
     JSSSPtr jss = std::dynamic_pointer_cast<JSSS>(sol);
 
@@ -152,13 +153,13 @@ void GA_JSSP::repair(common::SolutionPtr& sol)
     }
 }
 
-void GA_JSSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2, common::SolutionPtr& outChild1, common::SolutionPtr& outChild2)
+common::SolutionVec GA_JSSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2)
 {
     JSSSPtr jss_parent1 = std::dynamic_pointer_cast<JSSS>(parent1);
     JSSSPtr jss_parent2 = std::dynamic_pointer_cast<JSSS>(parent2);
 
-    outChild1 = std::make_shared<JSSS>();
-    outChild2 = std::make_shared<JSSS>();
+    JSSSPtr outChild1 = std::make_shared<JSSS>();
+    JSSSPtr outChild2 = std::make_shared<JSSS>();
 
     JSSSPtr jss_outChild1 = std::dynamic_pointer_cast<JSSS>(outChild1);
     JSSSPtr jss_outChild2 = std::dynamic_pointer_cast<JSSS>(outChild2);
@@ -182,9 +183,12 @@ void GA_JSSP::crossover(common::SolutionPtr parent1, common::SolutionPtr parent2
     
     jss_outChild1->cost = evaluateSolution(jss_outChild1);
     jss_outChild2->cost = evaluateSolution(jss_outChild2);
+
+    common::SolutionVec res {jss_outChild1, jss_outChild2};
+    return res;
 }
 
-void GA_JSSP::mutation(common::SolutionPtr& outChild, float mutationChance)
+common::SolutionPtr GA_JSSP::mutation(common::SolutionPtr outChild, float mutationChance)
 {
     JSSSPtr tss = std::dynamic_pointer_cast<JSSS>(outChild);
     std::vector<int> indexes = mhac_random::sample(outChild->getSize(), 2);
@@ -196,12 +200,14 @@ void GA_JSSP::mutation(common::SolutionPtr& outChild, float mutationChance)
         std::swap(tss->schedule[i], tss->schedule[j]);
         tss->cost = evaluateSolution(tss);
     }
+
+    return tss;
 }
 
 ACO_JSSP::ACO_JSSP(const TimeMatrix& products) : JSSP(products)
 {}
 
-void ACO_JSSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
+common::SolutionPtr ACO_JSSP::updateAntPath(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr pm, float alpha, float beta)
 {
     JSSSPtr jss = std::dynamic_pointer_cast<JSSS>(ant);
 
@@ -242,9 +248,11 @@ void ACO_JSSP::updateAntPath(common::SolutionPtr &ant, swarm::ACO::PheromoneMatr
 
         std::swap(jss->schedule[i + 1], jss->schedule[selectedIndex]);
     }
+
+    return jss;
 }
 
-void ACO_JSSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr &pm, float rho)
+void ACO_JSSP::updatePheromoneMatrix(common::SolutionPtr ant, swarm::ACO::PheromoneMatrixPtr pm, float rho)
 {
     JSSSPtr jss = std::dynamic_pointer_cast<JSSS>(ant);
 
