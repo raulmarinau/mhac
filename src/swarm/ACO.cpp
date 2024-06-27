@@ -42,8 +42,6 @@ common::SolutionPtr AntColonyOptimization::solve(int generations, int colonySize
             ant = mProblem->updateAntPath(ant, mPheromoneMatrix, alpha, beta);
             ant->cost = mProblem->evaluateSolution(ant);
 
-            mProblem->updatePheromoneMatrix(ant, mPheromoneMatrix, rho);
-
             if (ant->cost < bestS->cost)
             {
                 bestS = ant;
@@ -51,6 +49,8 @@ common::SolutionPtr AntColonyOptimization::solve(int generations, int colonySize
             }
         }
     }
+    
+    mProblem->updatePheromoneMatrix(bestS, mPheromoneMatrix, rho);
 
     return bestS;
 }
