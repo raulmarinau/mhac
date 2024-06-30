@@ -5,7 +5,7 @@ set separator ::
 class common::Solution {
 }
 
-class common::Problem {
+interface common::Problem {
 }
 
 class physics::SA::SimulatedAnnealing {
@@ -21,20 +21,21 @@ class evolutionary::GA::GeneticAlgorithm {
 }
 evolutionary::GA::GeneticAlgorithm *-- evolutionary::GA::Problem
 
-class evolutionary::GA::Problem {
+interface evolutionary::GA::Problem {
 }
 evolutionary::GA::Problem <|-[#blue,dashed]- common::Problem
 
-
-class swarm::ACO::Problem {
-}
-swarm::ACO::Problem <|-[#blue,dashed]- common::Problem
 
 class swarm::ACO::AntColonyOptimization {
 + AntColonyOptimization(swarm::ACO::Problem)
 + common::Solution solve(...)
 }
 swarm::ACO::AntColonyOptimization *-- swarm::ACO::Problem
+
+interface swarm::ACO::Problem {
+}
+swarm::ACO::Problem <|-[#blue,dashed]- common::Problem
+
 
 class problems::JSS::JSSP {
 }
